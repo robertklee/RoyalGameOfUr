@@ -4,6 +4,18 @@ import string
 from bottle import request
 import json
 
+'''
+Game Logic 
+'''
+class UrGame():
+  def __init__(self, key):
+    self.GAME_KEY = key
+    self.boardState = [] 
+
+'''
+Run Server  
+'''
+
 PROD = '--prod' in sys.argv
 
 app = bottle.Bottle()
