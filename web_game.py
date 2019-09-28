@@ -3,15 +3,7 @@ from bottlereact import BottleReact
 import string
 from bottle import request
 import json
-
-'''
-Game Logic 
-'''
-class UrGame():
-  def __init__(self, key):
-    self.GAME_KEY = key
-    self.boardState = [] 
-
+from bottle import HTTPResponse
 '''
 Run Server  
 '''
@@ -32,6 +24,16 @@ def root():
 def test():
   data_bytes = request._get_body_string()
   print(json.loads(data_bytes))
+  print(request.environ.get('HTTP_X_FORWARDED_FOR') or request.environ.get('REMOTE_ADDR'))
+  return HTTPResponse(
+          status=200,
+          headers={
+              "Content-Type": "application/json"
+          },
+          body=json.dumps({
+                "gameState": ['X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X'],
+          })
+      )
 
 def run():
   bottle.debug(not PROD)

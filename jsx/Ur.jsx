@@ -189,21 +189,19 @@ handleClick(i) {
   this.state.xIsNext = !this.state.xIsNext;
   this.setState({
     currentDisplay : newState
-  })
-  this.getData(i)
+  });
+  this.getData(i) 
 }
 
 getData(i) {
   // create a new XMLHttpRequest
   var xhr = new XMLHttpRequest()
-
+  xhr.responseType = 'json';
   // get a callback when the server responds
-  xhr.addEventListener('load', () => {
-    // update the state of the component with the result here
-  })
-  // open the request with the verb and the url
   xhr.open('POST', 'http://localhost:2081/hiddenRequest')
-  // send the request
+  xhr.onload  = function() {
+    var testVal = xhr.response['gameState'];
+  }
   xhr.send(JSON.stringify({ 'clickPosition': i }))
 }
 
