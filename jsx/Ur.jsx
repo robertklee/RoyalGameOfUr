@@ -65,55 +65,35 @@ renderSquare_nb_noClick(i) {
 render() {
   return (
     <div>
-        <div className="board-row">
-        {this.renderSquare_nb_noClick(99)}
-        {this.renderSquare_nb_noClick(99)}
-        {this.renderSquare_nb_noClick(99)}
-        {this.renderSquare_nb(0)}
-        {this.renderSquare_nb(1)}
-        {this.renderSquare_nb(2)}
-        {this.renderSquare_nb_noClick(99)}
-        {this.renderSquare_nb_noClick(99)}
+      <div style={boardRow}>
+        {this.renderSquareRed(0)}
+        {this.renderSquare(1)}
+        {this.renderSquare(2)}
+        {this.renderSquare(3)}
+        {this.renderSquare_nb(4)}
+        {this.renderSquare_nb(5)}
+        {this.renderSquareRed(6)}
+        {this.renderSquare(7)}
       </div>
-      <div className="board-row">
-        {this.renderSquareRed(3)}
-        {this.renderSquare(4)}
-        {this.renderSquare(5)}
-        {this.renderSquare(6)}
-        {this.renderSquare_nb(7)}
-        {this.renderSquare_nb(8)}
-        {this.renderSquareRed(9)}
+      <div style={boardRow}>
+        {this.renderSquare(8)}
+        {this.renderSquare(9)}
         {this.renderSquare(10)}
-      </div>
-      <div className="board-row">
-        {this.renderSquare(11)}
+        {this.renderSquareRed(11)}
         {this.renderSquare(12)}
         {this.renderSquare(13)}
-        {this.renderSquareRed(14)}
+        {this.renderSquare(14)}
         {this.renderSquare(15)}
-        {this.renderSquare(16)}
+      </div>
+      <div style={boardRow}>
+        {this.renderSquareRed(16)}
         {this.renderSquare(17)}
         {this.renderSquare(18)}
-      </div>
-      <div className="board-row">
-        {this.renderSquareRed(19)}
-        {this.renderSquare(20)}
-        {this.renderSquare(21)}
-        {this.renderSquare(22)}
-        {this.renderSquare_nb(23)}
-        {this.renderSquare_nb(24)}
-        {this.renderSquareRed(25)}
-        {this.renderSquare(26)}
-      </div>
-      <div className="board-row">
-        {this.renderSquare_nb_noClick(99)}
-        {this.renderSquare_nb_noClick(99)}
-        {this.renderSquare_nb_noClick(99)}
-        {this.renderSquare_nb(27)}
-        {this.renderSquare_nb(28)}
-        {this.renderSquare_nb(29)}
-        {this.renderSquare_nb_noClick(99)}
-        {this.renderSquare_nb_noClick(99)}
+        {this.renderSquare(19)}
+        {this.renderSquare_nb(20)}
+        {this.renderSquare_nb(21)}
+        {this.renderSquareRed(22)}
+        {this.renderSquare(23)}
       </div>
     </div>
   );
