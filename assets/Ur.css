@@ -45,7 +45,6 @@ ol, ul {
   background: #fff;
   border: 0px solid #fff;
   margin-left: 1px;
-  margin-right: -1px;
   margin-top: 0px;
   height: 119px;
   width: 119px;
@@ -61,9 +60,17 @@ ol, ul {
 
 .game {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .game-info {
-  margin-left: 20px;
+  margin: auto;
+}
+
+.game-title {
+  max-height: 20%;
+  margin: auto;
+  text-align: center;
+  padding-bottom: 50px;
+  height: auto;
 }

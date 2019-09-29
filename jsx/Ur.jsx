@@ -118,7 +118,8 @@ handleClick(i) {
   this.setState({
     currentDisplay : newState
   });
-  this.getData(i) 
+  this.getData(i);
+  console.log(window.location.hostname);
 }
 
 getData(i) {
@@ -137,8 +138,9 @@ render() {
   const current = this.state.currentDisplay;
   return (
     <div className="game">
-    
-    <h1>Royal Game of Ur</h1> 
+      <div className="game-title">
+        <h1>Royal Game of Ur</h1> 
+      </div>
       <div className="game-board">
         <Board
           squares={current}
