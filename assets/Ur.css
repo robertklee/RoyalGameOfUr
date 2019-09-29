@@ -28,6 +28,7 @@ ol, ul {
   line-height: 34px;
   font-size: 70px;
   float: left;
+  box-sizing: border-box;
 }
 
 .square-white {
@@ -41,7 +42,13 @@ ol, ul {
 }
 
 .square-nb {
-  background: #f77;
+  background: #fff;
+  border: 0px solid #fff;
+  margin-left: 1px;
+  margin-right: -1px;
+  margin-top: 0px;
+  height: 119px;
+  width: 119px;
 }
 
 .square:focus {

@@ -138,7 +138,7 @@ render() {
   return (
     <div className="game">
     
-    <h1>Royal Game of Ur</h1>
+    <h1>Royal Game of Ur</h1> 
       <div className="game-board">
         <Board
           squares={current}
