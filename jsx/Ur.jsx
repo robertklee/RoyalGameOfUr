@@ -1,62 +1,10 @@
 // require https://unpkg.com/react@16/umd/react.development.js
 // require https://unpkg.com/react-dom@16/umd/react-dom.development.js
-//require('./Ur.css');
-
-const squareStyle = {
-  background: "#fff",
-  border: "1px solid #999",
-  float: "left",
-  fontSize: "70px",
-  fontWeight: "bold",
-  //line-height: "34px",
-  height: "120px",
-  marginRight: "-1px",
-  marginTop: "-1px",
-  padding: "0",
-  textAlign: "center",
-  width: "120px",
-};
-
-const squareStyleRed = {
-  background: "#f77",
-  border: "1px solid #999",
-  float: "left",
-  fontSize: "70px",
-  fontWeight: "bold",
-  //line-height: "34px",
-  height: "120px",
-  marginRight: "-1px",
-  marginTop: "-1px",
-  padding: "0",
-  textAlign: "center",
-  width: "120px",
-};
-
-const squareStyleNB = {
-  background: "#fff",
-  border: "0px solid #999",
-  float: "left",
-  fontSize: "70px",
-  fontWeight: "bold",
-  //line-height: "34px",
-  height: "119px",
-  marginRight: "-1px",
-  marginLeft: "1px",
-  marginTop: "0px",
-  padding: "0",
-  textAlign: "center",
-  width: "119px",
-};
-
- const boardRow = {
-  clear: 'both',
-  content: "",
-  display: 'table',
-}
+// require Ur.css
 
 function SquareRed(props) {
   return (
-    <button style={squareStyleRed} onClick={props.onClick}>
+    <button className="square square-red" onClick={props.onClick}>
       {props.value}
     </button>
   );
@@ -64,7 +12,7 @@ function SquareRed(props) {
 
 function Square(props) {
   return (
-    <button style={squareStyle} onClick={props.onClick}>
+    <button className="square square-white" onClick={props.onClick}>
       {props.value}
     </button>
   );
@@ -72,7 +20,7 @@ function Square(props) {
 
 function Square_nb(props) {
 return (
-  <button style={squareStyleNB} onClick={props.onClick}>
+  <button className="square square-nb" onClick={props.onClick}>
     {props.value}
   </button>
 );
@@ -117,7 +65,7 @@ renderSquare_nb_noClick(i) {
 render() {
   return (
     <div>
-        <div style={boardRow}>
+        <div className="board-row">
         {this.renderSquare_nb_noClick(99)}
         {this.renderSquare_nb_noClick(99)}
         {this.renderSquare_nb_noClick(99)}
@@ -127,7 +75,7 @@ render() {
         {this.renderSquare_nb_noClick(99)}
         {this.renderSquare_nb_noClick(99)}
       </div>
-      <div style={boardRow}>
+      <div className="board-row">
         {this.renderSquareRed(3)}
         {this.renderSquare(4)}
         {this.renderSquare(5)}
@@ -137,7 +85,7 @@ render() {
         {this.renderSquareRed(9)}
         {this.renderSquare(10)}
       </div>
-      <div style={boardRow}>
+      <div className="board-row">
         {this.renderSquare(11)}
         {this.renderSquare(12)}
         {this.renderSquare(13)}
@@ -147,7 +95,7 @@ render() {
         {this.renderSquare(17)}
         {this.renderSquare(18)}
       </div>
-      <div style={boardRow}>
+      <div className="board-row">
         {this.renderSquareRed(19)}
         {this.renderSquare(20)}
         {this.renderSquare(21)}
@@ -157,7 +105,7 @@ render() {
         {this.renderSquareRed(25)}
         {this.renderSquare(26)}
       </div>
-      <div style={boardRow}>
+      <div className="board-row">
         {this.renderSquare_nb_noClick(99)}
         {this.renderSquare_nb_noClick(99)}
         {this.renderSquare_nb_noClick(99)}
