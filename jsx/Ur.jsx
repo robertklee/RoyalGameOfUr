@@ -65,7 +65,7 @@ renderSquare_nb_noClick(i) {
 render() {
   return (
     <div>
-      <div style={boardRow}>
+      <div className="board-row">
         {this.renderSquareRed(0)}
         {this.renderSquare(1)}
         {this.renderSquare(2)}
@@ -75,7 +75,7 @@ render() {
         {this.renderSquareRed(6)}
         {this.renderSquare(7)}
       </div>
-      <div style={boardRow}>
+      <div className="board-row">
         {this.renderSquare(8)}
         {this.renderSquare(9)}
         {this.renderSquare(10)}
@@ -85,7 +85,7 @@ render() {
         {this.renderSquare(14)}
         {this.renderSquare(15)}
       </div>
-      <div style={boardRow}>
+      <div className="board-row">
         {this.renderSquareRed(16)}
         {this.renderSquare(17)}
         {this.renderSquare(18)}
@@ -137,9 +137,7 @@ render() {
   const current = this.state.currentDisplay;
   return (
     <div className="game">
-    <head>  
-      <title>Royal Game Of Ur</title>
-    </head>
+    
     <h1>Royal Game of Ur</h1>
       <div className="game-board">
         <Board
