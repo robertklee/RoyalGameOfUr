@@ -20,7 +20,7 @@ def root():
     br.Game({})
   )
 
-@app.post('/hiddenRequest')
+@app.put('/hiddenRequest')
 def test():
   data_bytes = request._get_body_string()
   print(json.loads(data_bytes))
@@ -28,12 +28,41 @@ def test():
   return HTTPResponse(
           status=200,
           headers={
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
+              # "Access-Control-Allow-Origin": "*",
           },
           body=json.dumps({
                 "gameState": ['X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X'],
           })
       )
+
+# @bottle.route('/<:re:.*>', method='OPTIONS')
+# def enable_cors_generic_route():
+#     """
+#     This route takes priority over all others. So any request with an OPTIONS
+#     method will be handled by this function.
+
+#     See: https://github.com/bottlepy/bottle/issues/402
+
+#     NOTE: This means we won't 404 any invalid path that is an OPTIONS request.
+#     """
+#     add_cors_headers()
+
+# @bottle.hook('after_request')
+# def enable_cors_after_request_hook():
+#     """
+#     This executes after every route. We use it to attach CORS headers when
+#     applicable.
+#     """
+#     add_cors_headers()
+
+# def add_cors_headers():
+#     if True:  # You don't have to gate this
+#         bottle.response.headers['Access-Control-Allow-Origin'] = '*'
+#         bottle.response.headers['Access-Control-Allow-Methods'] = \
+#             'GET, POST, PUT, OPTIONS'
+#         bottle.response.headers['Access-Control-Allow-Headers'] = \
+#             'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
 
 def run():
   bottle.debug(not PROD)

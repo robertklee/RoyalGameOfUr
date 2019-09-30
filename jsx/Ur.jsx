@@ -118,25 +118,30 @@ handleClick(i) {
   this.setState({
     currentDisplay : newState
   });
-  this.getData(i);
-  console.log(window.location.hostname);
+  // this.getData(i);
+  var data = {
+    clickPosition: i,
+  };
+
+  sendDataToServer(data);
 }
 
-getData(i) {
-  // create a new XMLHttpRequest
-  var xhr = new XMLHttpRequest()
-  xhr.responseType = 'json';
-  // get a callback when the server responds
-  xhr.open('POST', 'http://localhost:2081/hiddenRequest')
-  xhr.onload  = function() {
-    var testVal = xhr.response['gameState'];
-  }
-  xhr.send(JSON.stringify({ 'clickPosition': i }))
-}
+// getData(i) {
+//   // create a new XMLHttpRequest
+//   var xhr = new XMLHttpRequest()
+//   xhr.responseType = 'json';
+//   // get a callback when the server responds
+//   xhr.open('POST', 'http://localhost:2081/hiddenRequest')
+//   xhr.onload  = function() {
+//     var testVal = xhr.response['gameState'];
+//   }
+//   xhr.send(JSON.stringify({ 'clickPosition': i }))
+// }
 
 render() {
   const current = this.state.currentDisplay;
   return (
+    // TODO lock scaling of buttons when window width is shrunk
     <div className="game">
       <div className="game-title">
         <h1>Royal Game of Ur</h1> 
@@ -157,6 +162,17 @@ render() {
 
 //ReactDOM.render(<Game />, document.getElementById("root")); // we get stuck on the loading screen with this 
 
+
+function sendDataToServer(data) {
+  const endpointUri = 'hiddenRequest';
+  var endpoint = "http://" + window.location.host.toString() + '/' + endpointUri;
+  console.log(endpoint);
+
+  var request = new XMLHttpRequest();
+  request.open('PUT', endpoint, true);
+  request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+  request.send(JSON.stringify(data));
+}
 
 bottlereact._register('Board', Board)
 bottlereact._register('Game', Game)
