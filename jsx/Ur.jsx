@@ -103,12 +103,16 @@ render() {
 class Game extends React.Component {
 
 constructor(props) {
+  console.log("game constructor")
   super(props);
   this.state = {
     xIsNext: true,
-    gameID : 'fffffff',
+    gameKey: 'fffffff',
     currentDisplay : Array(40).fill("")
   };
+
+  this.handleGameKeyChange = this.handleGameKeyChange.bind(this);
+  this.handleGameKeySubmit = this.handleGameKeySubmit.bind(this);
 }
 
 handleClick(i) {
@@ -138,6 +142,20 @@ handleClick(i) {
 //   xhr.send(JSON.stringify({ 'clickPosition': i }))
 // }
 
+handleGameKeySubmit(event) {
+  this.state.gameKey = this.state.gameKey.toUpperCase()
+  this.setState({gameKey: this.state.gameKey.toUpperCase()} )
+  alert('A name was submitted: ' + this.state.gameKey)
+
+  event.preventDefault();
+
+}
+
+handleGameKeyChange(event) {
+  this.setState({gameKey: event.target.value} ) 
+  this.state.gameKey = event.target.value;
+}
+
 render() {
   const current = this.state.currentDisplay;
   return (
@@ -152,6 +170,17 @@ render() {
           onClick={i => this.handleClick(i)}
         />
       </div>
+
+      <br/>
+      <br/>
+
+      <form onSubmit={this.handleGameKeySubmit}>
+        <label>
+          Game Key: 
+          <input type="text" value={this.state.gameKey} onChange={this.handleGameKeyChange} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
     </div>
   );
 }
