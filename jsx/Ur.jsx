@@ -103,11 +103,13 @@ render() {
 class Game extends React.Component {
 
 constructor(props) {
-  console.log("game constructor")
+  let keyLength = 6;
+  let r = generateId().substring(0,keyLength);
+  console.log("Game Key: ", r);
   super(props);
   this.state = {
     xIsNext: true,
-    gameKey: 'fffffff',
+    gameKey: r.toUpperCase(),
     currentDisplay : Array(40).fill("")
   };
 
@@ -138,6 +140,7 @@ handleClick(i) {
   // this.getData(i);
   var data = {
     clickPosition: i,
+    gameKey: this.state.gameKey,
   };
 
   sendDataToServer(this, data);
@@ -190,7 +193,7 @@ render() {
       <form onSubmit={this.handleGameKeySubmit}>
         <label>
           Game Key: 
-          <input type="text" value={this.state.gameKey} onChange={this.handleGameKeyChange} />
+          <input type="text" value={this.state.gameKey} onChange={this.handleGameKeyChange } autocorrect="off" autocapitalize="none"/>
         </label>
         <input type="submit" value="Submit" />
       </form>
@@ -220,6 +223,19 @@ function sendDataToServer(targetobject, data) {
     })
   }
   request.send(JSON.stringify(data));
+}
+
+// dec2hex :: Integer -> String
+// i.e. 0-255 -> '00'-'ff'
+function dec2hex (dec) {
+  return ('0' + dec.toString(16)).substr(-2)
+}
+
+// generateId :: Integer -> String
+function generateId (len) {
+  var arr = new Uint8Array((len || 40) / 2)
+  window.crypto.getRandomValues(arr)
+  return Array.from(arr, dec2hex).join('')
 }
 
 bottlereact._register('Board', Board)
