@@ -123,7 +123,7 @@ handleClick(i) {
     clickPosition: i,
   };
 
-  sendDataToServer(data);
+  sendDataToServer(data, this);
 }
 
 // getData(i) {
@@ -163,7 +163,7 @@ render() {
 //ReactDOM.render(<Game />, document.getElementById("root")); // we get stuck on the loading screen with this 
 
 
-function sendDataToServer(data) {
+function sendDataToServer(data, targetobject) {
   const endpointUri = 'hiddenRequest';
   var endpoint = "http://" + window.location.host.toString() + '/' + endpointUri;
   console.log(endpoint);
@@ -171,6 +171,12 @@ function sendDataToServer(data) {
   var request = new XMLHttpRequest();
   request.open('PUT', endpoint, true);
   request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+  request.onload = function () {
+    var gamestate  = JSON.parse(request.responseText);
+    targetobject.setState({
+      currentDisplay : gamestate["gameState"]
+    })
+  }
   request.send(JSON.stringify(data));
 }
 
