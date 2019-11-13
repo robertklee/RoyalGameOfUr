@@ -19,10 +19,6 @@ class Game():
         [ 3][ 2][ 1][ 0][15][14][13][12]
         '''
         self.playerConversion = {
-            19:0,
-            18:1,
-            17:2,
-            16:3,
             8:4,
             9:5,
             10:6,
@@ -31,10 +27,14 @@ class Game():
             13:9,
             14:10,
             15:11,
-            23:12,
-            22:13,
-            21:14,
+            16:3,
+            17:2,
+            18:1,
+            19:0,
             20:15,
+            21:14,
+            22:13,
+            23:12,
         }
         self.doubleRollSpaces = [13, 7, 3]
 
@@ -57,7 +57,8 @@ class Game():
             return self.render(1)
         # Handel wrong person attempting to join game
         if self.player1Ip != None and self.player1Ip != ip and self.player0Ip != ip:
-            return self.render(0) # Just return a render of the game
+            return self.render(0) # Just return a render of the game from player 0's perspective
+        #
         # Handel player 0 making a click
         if ip == self.player0Ip:
             # Check if it is their turn and check if it is a valid move
@@ -96,6 +97,8 @@ class Game():
             else:
                 return self.render(0) # If it is not their turn return their board state nothing else
 
+        return self.render(0)
+
         # Handel player 1 making a click
         if ip == self.player1Ip:
             # Check if it is their turn and check if it is a valid move
@@ -132,17 +135,17 @@ class Game():
                         self.playerSelection = None
                         return self.render(1)
             else:
-                return self.render(1) # If it is not their turn return their board state nothing else
+                return self.render(-1) # If it is not their turn return their board state nothing else
 
 
     def render(self, player):
         '''
         player view = {
-            'boardState' = [array of 24 strings to show in board state],
-            'yourTurn' = bool if it is their turn,
-            'rollValue' = int [0-4] their roll value,
-            'youWon' = bool if they have won,
-            'gameOver' = bool if game over,   
+            'gameState' = [array of 24 strings to show in board state],
+            'yourTurn'   = bool if it is their turn,
+            'rollValue'  = int [0-4] their roll value,
+            'youWon'     = bool if they have won,
+            'gameOver'   = bool if game over,   
         }
         '''
         boardState = []
@@ -150,15 +153,88 @@ class Game():
             boardState.append("")
 
         yourTurn = self.nextPlayerToPlay == player
-        youWon = self.player0Won == True
+        youWon = False
+        if player == 0:
+            youWon = self.player0Won == True
+        else:
+            youWon = self.player0Won == True
+
+
         gameOver = self.player0Won == True or self.player1Won == True
         rollValue = None
+
         if player == 0:
             rollValue = self.player0Roll
             pass
         elif player == 1:
             rollValue = self.player1Roll
             pass
+
+        convertPlayerOff = {
+            0 :3,
+            1 :2,
+            2 :1,
+            3 :0,
+            4 :8,
+            5 :9,
+            6 :10,
+            7 :11,
+            9 :12,
+            10:13,
+            11:14,
+            12:15,
+            13:7,
+            14:6
+        }
+        convertPlayerMain = {
+            0 :19,
+            1 :18,
+            2 :17,
+            3 :16,
+            4 :8,
+            5 :9,
+            6 :10,
+            7 :11,
+            9 :12,
+            10:13,
+            11:14,
+            12:15,
+            13:23,
+            14:22
+        }
+
+        for value in self.player1PiecesPositions:
+            if player == 1:
+                boardState[convertPlayerMain[value]] = "O"
+            else:
+                boardState[convertPlayerOff[value]] = "O"
+
+        for value in self.player0PiecesPositions:
+            if player == 0:
+                boardState[convertPlayerMain[value]] = "X"
+            else:
+                boardState[convertPlayerOff[value]] = "X"
+
+        if player == 0:
+            boardState[20] = str(self.player0BenchSize)
+            boardState[4]  = str(self.player1BenchSize)
         else:
-            assert False
-        return None
+            boardState[4] = str(self.player0BenchSize)
+            boardState[20]  = str(self.player1BenchSize) 
+
+        print(self.playerSelection)
+        if yourTurn and print(self.playerSelection) != None:    
+            print(convertPlayerMain[self.playerSelection])
+            boardState[convertPlayerMain[self.playerSelection]] = "[" + boardState[convertPlayerMain[self.playerSelection]] + "]"
+
+
+
+        returnValue = {
+            'gameState' : boardState,
+            'yourTurn'  : yourTurn,
+            'rollValue' : rollValue,
+            'youWon'    : youWon,
+            'gameOver'  : gameOver,
+        }
+
+        return returnValue

@@ -111,19 +111,32 @@ constructor(props) {
   };
 }
 
+componentDidMount() {
+  this.intervalID = setInterval(
+    () => sendDataToServer(this, {
+      clickPosition: -1,
+    }),
+    100000000
+  );
+}
+
+componentWillUnmount() {
+  clearInterval(this.intervalID);
+}
+
 handleClick(i) {
-  const newState = this.state.currentDisplay.slice();
-  newState[i] = this.state.xIsNext ? "X" : "O";
-  this.state.xIsNext = !this.state.xIsNext;
-  this.setState({
-    currentDisplay : newState
-  });
+  //const newState = this.state.currentDisplay.slice();
+  //newState[i] = this.state.xIsNext ? "X" : "O";
+  //this.state.xIsNext = !this.state.xIsNext;
+  //this.setState({
+  //  currentDisplay : newState
+  //});
   // this.getData(i);
   var data = {
     clickPosition: i,
   };
 
-  sendDataToServer(data, this);
+  sendDataToServer(this, data);
 }
 
 // getData(i) {
@@ -163,7 +176,7 @@ render() {
 //ReactDOM.render(<Game />, document.getElementById("root")); // we get stuck on the loading screen with this 
 
 
-function sendDataToServer(data, targetobject) {
+function sendDataToServer(targetobject, data) {
   const endpointUri = 'hiddenRequest';
   var endpoint = "http://" + window.location.host.toString() + '/' + endpointUri;
   console.log(endpoint);

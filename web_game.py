@@ -4,6 +4,9 @@ import string
 from bottle import request
 import json
 from bottle import HTTPResponse
+
+from game_logic import Game
+
 '''
 Run Server  
 '''
@@ -13,6 +16,8 @@ PROD = '--prod' in sys.argv
 app = bottle.Bottle()
 #br = BottleReact(app, prod=PROD, render_server=False)
 br = BottleReact(app, prod=PROD, verbose=True)
+
+testGame = Game("127.0.0.1")
 
 @app.get('/Game')
 def root():
@@ -25,15 +30,16 @@ def test():
   data_bytes = request._get_body_string()
   print(json.loads(data_bytes))
   print(request.environ.get('HTTP_X_FORWARDED_FOR') or request.environ.get('REMOTE_ADDR'))
+  returnVal  = testGame.render(-1)
+  if json.loads(data_bytes)['clickPosition'] != -1:
+    returnVal = testGame.handelClick(request.environ.get('REMOTE_ADDR'), json.loads(data_bytes)['clickPosition'])
   return HTTPResponse(
           status=200,
           headers={
               "Content-Type": "application/json",
               # "Access-Control-Allow-Origin": "*",
           },
-          body=json.dumps({
-                "gameState": ['X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X','X'],
-          })
+          body=json.dumps(returnVal)
       )
 
 # @bottle.route('/<:re:.*>', method='OPTIONS')
