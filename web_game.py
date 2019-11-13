@@ -80,7 +80,7 @@ def run():
   bottle.run(
     app=app, 
     host='localhost',
-    port='2081',
+    port='80',
     reloader=not PROD
   )
 
