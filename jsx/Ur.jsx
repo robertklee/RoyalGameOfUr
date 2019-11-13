@@ -162,7 +162,13 @@ handleClick(i) {
 handleGameKeySubmit(event) {
   this.state.gameKey = this.state.gameKey.toUpperCase()
   this.setState({gameKey: this.state.gameKey.toUpperCase()} )
-  alert('A name was submitted: ' + this.state.gameKey)
+  
+  var data = {
+    clickPosition: -1,
+    game_key: this.state.gameKey,
+  };
+
+  sendDataToServer()
 
   event.preventDefault();
 
@@ -201,7 +207,7 @@ render() {
       <text>
         <label>
           Dice Roll: 
-          <input type="text" value={this.state.diceRoll} />
+          <input type="text" value={this.state.diceRoll} readOnly={true}/>
         </label>
       </text>
     </div>
