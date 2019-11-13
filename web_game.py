@@ -79,7 +79,7 @@ def run():
   bottle.debug(not PROD)
   bottle.run(
     app=app, 
-    host='localhost',
+    host='192.168.0.11',
     port='80',
     reloader=not PROD
   )
