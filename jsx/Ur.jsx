@@ -141,7 +141,7 @@ handleClick(i) {
   // this.getData(i);
   var data = {
     clickPosition: i,
-    gameKey: this.state.gameKey,
+    game_key: this.state.gameKey,
   };
 
   sendDataToServer(this, data);

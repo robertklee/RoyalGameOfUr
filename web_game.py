@@ -32,6 +32,7 @@ def test():
   request_data = json.loads(data_bytes)
   returnVal = None
   # Handel new clients 
+  print(request_data)
   if request_data['game_key'] not in games.keys():
     games[request_data['game_key']] = Game(request.environ.get('REMOTE_ADDR'))
     returnVal = games[request_data['game_key']].handelClick(request.environ.get('REMOTE_ADDR'), request_data['clickPosition'])

@@ -200,7 +200,8 @@ class Game():
             11:14,
             12:15,
             13:23,
-            14:22
+            14:22,
+            15:20
         }
 
         for value in self.player1PiecesPositions:
