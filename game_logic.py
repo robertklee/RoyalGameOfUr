@@ -82,8 +82,8 @@ class Game():
                             self.player0BenchSize -= 1
                         else:
                             self.player0PiecesPositions.remove(self.playerSelection) # They are moving an already existing piece on the board remove the old piece position
-                        if self.playerConversion[position] in self.player1PiecePositions: # If the new piece position in the other players positions remove the board and add it to the other players bench
-                            self.player1PiecePositions.remove(self.playerConversion[position])
+                        if self.playerConversion[position] in self.player1PiecesPositions: # If the new piece position in the other players positions remove the board and add it to the other players bench
+                            self.player1PiecesPositions.remove(self.playerConversion[position])
                             self.player1BenchSize+=1
                         self.player0PiecesPositions.append(self.playerConversion[position]) # Add the new position of the piece
                         if self.playerConversion[position] not in self.doubleRollSpaces: # They have moved a piece onto a second turn postion
@@ -145,4 +145,20 @@ class Game():
             'gameOver' = bool if game over,   
         }
         '''
+        boardState = []
+        for _ in range(24):
+            boardState.append("")
+
+        yourTurn = self.nextPlayerToPlay == player
+        youWon = self.player0Won == True
+        gameOver = self.player0Won == True or self.player1Won == True
+        rollValue = None
+        if player == 0:
+            rollValue = self.player0Roll
+            pass
+        elif player == 1:
+            rollValue = self.player1Roll
+            pass
+        else:
+            assert False
         return None
