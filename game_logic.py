@@ -80,20 +80,27 @@ class Game():
                             print("move Ok")
                             self.player0PiecesPositions.append(self.playerConversion[position])
                             self.player0BenchSize -= 1
-                            self.nextPlayerToPlay = 1
+                            if self.playerConversion[position] not in self.doubleRollSpaces:
+                                self.nextPlayerToPlay = 1
                             if len(self.player0PiecesPositions) == 0  and self.player0BenchSize == 0: 
                                 self.player0won = True
                             self.player0Roll = randint(0,4)
                             self.playerSelection = None
                             return self.render(0)
-                        elif self.playerConversion[position] - self.player0Roll == self.playerSelection and not self.playerConversion[position] in self.player0PiecesPositions:
+                        elif self.playerConversion[position] - self.player0Roll == self.playerSelection and not self.playerConversion[position] in self.player0PiecesPositions and self.playerConversion[position] < 14:
                             self.player0PiecesPositions.remove(self.playerSelection) # They are moving an already existing piece on the board remove the old piece position
-                            if self.playerConversion[position] in self.player1PiecesPositions and self.playerConversion[position] in range(3,12): # If the new piece position in the other players positions remove the board and add it to the other players bench
+                            if self.playerConversion[position] in self.player1PiecesPositions and self.playerConversion[position] in range(4,12): # If the new piece position in the other players positions remove the board and add it to the other players bench
                                 self.player1PiecesPositions.remove(self.playerConversion[position])
                                 self.player1BenchSize+=1
                             self.player0PiecesPositions.append(self.playerConversion[position]) # Add the new position of the piece
                             if self.playerConversion[position] not in self.doubleRollSpaces: # They have moved a piece onto a second turn postion
                                 self.nextPlayerToPlay = 1
+                            self.player0Roll = randint(0,4)
+                            self.playerSelection = None
+                            return self.render(0)
+                        elif self.playerConversion[position] == 14 and self.playerSelection + self.player0Roll >= 14:
+                            self.player0PiecesPositions.remove(self.playerSelection)
+                            self.nextPlayerToPlay = 1
                             self.player0Roll = randint(0,4)
                             self.playerSelection = None
                             return self.render(0)
@@ -128,20 +135,27 @@ class Game():
                             print("move Ok")
                             self.player1PiecesPositions.append(self.playerConversion[position])
                             self.player1BenchSize -= 1
-                            self.nextPlayerToPlay = 0
+                            if self.playerConversion[position] not in self.doubleRollSpaces:
+                                self.nextPlayerToPlay = 0
                             if len(self.player1PiecesPositions) == 0  and self.player1BenchSize == 0: 
                                 self.player1won = True
                             self.player1Roll = randint(0,4)
                             self.playerSelection = None
                             return self.render(1)
-                        elif self.playerConversion[position] - self.player1Roll == self.playerSelection and not self.playerConversion[position] in self.player1PiecesPositions:
+                        elif self.playerConversion[position] - self.player1Roll == self.playerSelection and not self.playerConversion[position] in self.player1PiecesPositions and self.playerConversion[position] < 14:
                             self.player1PiecesPositions.remove(self.playerSelection) # They are moving an already existing piece on the board remove the old piece position
-                            if self.playerConversion[position] in self.player1PiecesPositions and self.playerConversion[position] in range(3,12): # If the new piece position in the other players positions remove the board and add it to the other players bench
-                                self.player1PiecesPositions.remove(self.playerConversion[position])
-                                self.player1BenchSize+=1
+                            if self.playerConversion[position] in self.player0PiecesPositions and self.playerConversion[position] in range(4,12): # If the new piece position in the other players positions remove the board and add it to the other players bench
+                                self.player0PiecesPositions.remove(self.playerConversion[position])
+                                self.player0BenchSize+=1
                             self.player1PiecesPositions.append(self.playerConversion[position]) # Add the new position of the piece
                             if self.playerConversion[position] not in self.doubleRollSpaces: # They have moved a piece onto a second turn postion
                                 self.nextPlayerToPlay = 0
+                            self.player1Roll = randint(0,4)
+                            self.playerSelection = None
+                            return self.render(1)
+                        elif self.playerConversion[position] == 14 and self.playerSelection + self.player1Roll >= 14:
+                            self.player1PiecesPositions.remove(self.playerSelection)
+                            self.nextPlayerToPlay = 0
                             self.player1Roll = randint(0,4)
                             self.playerSelection = None
                             return self.render(1)
@@ -200,12 +214,13 @@ class Game():
             5 :9,
             6 :10,
             7 :11,
-            9 :12,
-            10:13,
-            11:14,
-            12:15,
-            13:7,
-            14:6
+            8 :12,
+            9 :13,
+            10:14,
+            11:15,
+            12:7,
+            13:6,
+            14:5,
         }
         convertPlayerMain = {
             0 :19,
@@ -216,12 +231,13 @@ class Game():
             5 :9,
             6 :10,
             7 :11,
-            9 :12,
-            10:13,
-            11:14,
-            12:15,
-            13:23,
-            14:22,
+            8 :12,
+            9 :13,
+            10:14,
+            11:15,
+            12:23,
+            13:22,
+            14:21,
             15:20
         }
 
@@ -242,7 +258,7 @@ class Game():
             boardState[4]  = str(self.player1BenchSize)
         else:
             boardState[4] = str(self.player0BenchSize)
-        boardState[20]  = str(self.player1BenchSize) 
+            boardState[20]  = str(self.player1BenchSize) 
 
         if yourTurn and self.playerSelection != None:    
             boardState[convertPlayerMain[self.playerSelection]] = "[" + boardState[convertPlayerMain[self.playerSelection]] + "]"
