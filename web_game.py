@@ -17,7 +17,8 @@ app = bottle.Bottle()
 #br = BottleReact(app, prod=PROD, render_server=False)
 br = BottleReact(app, prod=PROD, verbose=True)
 
-testGame = Game("127.0.0.1")
+games = {} 
+
 
 @app.get('/Game')
 def root():
@@ -28,11 +29,15 @@ def root():
 @app.put('/hiddenRequest')
 def test():
   data_bytes = request._get_body_string()
-  print(json.loads(data_bytes))
   print(request.environ.get('HTTP_X_FORWARDED_FOR') or request.environ.get('REMOTE_ADDR'))
-  returnVal  = testGame.render(-1)
-  if json.loads(data_bytes)['clickPosition'] != -1:
-    returnVal = testGame.handelClick(request.environ.get('REMOTE_ADDR'), json.loads(data_bytes)['clickPosition'])
+  request_data = json.loads(data_bytes)
+  returnVal = None
+  # Handel new clients 
+  if request_data['game_key'] not in games.keys():
+    games[request_data['game_key']] = Game(request.environ.get('REMOTE_ADDR'))
+    returnVal = games[request_data['game_key']].handelClick(request.environ.get('REMOTE_ADDR'), request_data['clickPosition'])
+  else:
+    returnVal = games[request_data['game_key']].handelClick(request.environ.get('REMOTE_ADDR'), request_data['clickPosition'])
   return HTTPResponse(
           status=200,
           headers={

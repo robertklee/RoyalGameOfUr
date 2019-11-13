@@ -220,11 +220,11 @@ class Game():
             boardState[4]  = str(self.player1BenchSize)
         else:
             boardState[4] = str(self.player0BenchSize)
-            boardState[20]  = str(self.player1BenchSize) 
+        boardState[20]  = str(self.player1BenchSize) 
 
-        print(self.playerSelection)
+        #print(self.playerSelection)
         if yourTurn and print(self.playerSelection) != None:    
-            print(convertPlayerMain[self.playerSelection])
+            #print(convertPlayerMain[self.playerSelection])
             boardState[convertPlayerMain[self.playerSelection]] = "[" + boardState[convertPlayerMain[self.playerSelection]] + "]"
 
 
