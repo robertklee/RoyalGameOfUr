@@ -19,7 +19,6 @@ br = BottleReact(app, prod=PROD, verbose=True)
 
 games = {} 
 
-
 @app.get('/Game')
 def root():
   return br.render_html(

@@ -110,7 +110,8 @@ constructor(props) {
   this.state = {
     xIsNext: true,
     gameKey: r.toUpperCase(),
-    currentDisplay : Array(40).fill("")
+    currentDisplay: Array(40).fill(""),
+    diceRoll: -1
   };
 
   this.handleGameKeyChange = this.handleGameKeyChange.bind(this);
@@ -169,7 +170,6 @@ handleGameKeySubmit(event) {
 
 handleGameKeyChange(event) {
   this.setState({gameKey: event.target.value} ) 
-  this.state.gameKey = event.target.value;
 }
 
 render() {
@@ -193,10 +193,17 @@ render() {
       <form onSubmit={this.handleGameKeySubmit}>
         <label>
           Game Key: 
-          <input type="text" value={this.state.gameKey} onChange={this.handleGameKeyChange } autocorrect="off" autocapitalize="none"/>
+          <input type="text" value={this.state.gameKey} onChange={this.handleGameKeyChange } autoCorrect="off" autoCapitalize="none"/>
         </label>
         <input type="submit" value="Submit" />
       </form>
+
+      <text>
+        <label>
+          Dice Roll: 
+          <input type="text" value={this.state.diceRoll} />
+        </label>
+      </text>
     </div>
   );
 }
@@ -219,7 +226,8 @@ function sendDataToServer(targetobject, data) {
   request.onload = function () {
     var gamestate  = JSON.parse(request.responseText);
     targetobject.setState({
-      currentDisplay : gamestate["gameState"]
+      currentDisplay : gamestate["gameState"],
+      diceRoll: gamestate.diceRoll,
     })
   }
   request.send(JSON.stringify(data));
