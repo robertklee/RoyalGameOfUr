@@ -108,7 +108,6 @@ constructor(props) {
   console.log("Game Key: ", r);
   super(props);
   this.state = {
-    xIsNext: true,
     gameKey: r.toUpperCase(),
     currentDisplay: Array(40).fill(""),
     diceRoll: -1
@@ -122,8 +121,9 @@ componentDidMount() {
   this.intervalID = setInterval(
     () => sendDataToServer(this, {
       clickPosition: -1,
+      game_key: this.state.gameKey
     }),
-    100000000
+    1000
   );
 }
 
@@ -168,7 +168,7 @@ handleGameKeySubmit(event) {
     game_key: this.state.gameKey,
   };
 
-  sendDataToServer()
+  sendDataToServer(this, data)
 
   event.preventDefault();
 
@@ -233,7 +233,7 @@ function sendDataToServer(targetobject, data) {
     var gamestate  = JSON.parse(request.responseText);
     targetobject.setState({
       currentDisplay : gamestate["gameState"],
-      diceRoll: gamestate.diceRoll,
+      diceRoll: gamestate["rollValue"],
     })
   }
   request.send(JSON.stringify(data));

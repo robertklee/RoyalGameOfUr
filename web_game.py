@@ -28,7 +28,7 @@ def root():
 @app.put('/hiddenRequest')
 def test():
   data_bytes = request._get_body_string()
-  print(request.environ.get('HTTP_X_FORWARDED_FOR') or request.environ.get('REMOTE_ADDR'))
+  print(request.environ.get('REMOTE_ADDR'))
   request_data = json.loads(data_bytes)
   returnVal = None
   # Handel new clients 

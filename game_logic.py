@@ -51,91 +51,109 @@ class Game():
         '''
         TODO handel double turns
         '''
+        print(self.player1Roll)
         # Handel second player joining
         if self.player1Ip == None and self.player0Ip != ip:
             self.player1Ip = ip
+            print("player 1 Ip set")
             return self.render(1)
         # Handel wrong person attempting to join game
         if self.player1Ip != None and self.player1Ip != ip and self.player0Ip != ip:
             return self.render(0) # Just return a render of the game from player 0's perspective
-        #
+        
         # Handel player 0 making a click
         if ip == self.player0Ip:
             # Check if it is their turn and check if it is a valid move
             if self.nextPlayerToPlay == 0 and position in self.playerConversion.keys(): 
-            # Check if they already have something selected or if they are trying to select something
-                if self.playerSelection == None:
-                    # If they are trying to select something check if they have clicked on something valid
-                    if self.playerConversion[position] in self.player0PiecesPositions or self.playerConversion[position] == 15:
-                        self.playerSelection = self.playerConversion[position]
-                    return self.render(0)
-                else:
-                    # If they have already selected something check if the move they are requesting is valid
-                    if self.playerConversion[position] == 14 and self.playerConversion[position] - self.player0Roll <= self.playerSelection: # They are moving a piece off the board 
-                        self.player0PiecesPositions.remove(self.playerSelection) # Remove that piece from the board
-                        # Check for win condition
-                        if len(self.player0PiecesPositions) == 0  and self.player0BenchSize == 0: 
-                            self.player0won = True
-                        self.player0Roll = randint(0,4)
-                        return self.render(0)
-                    elif self.playerConversion[position] - self.player0Roll == self.playerSelection and not self.playerConversion[position] in self.player0PiecesPositions:
-                        if self.playerSelection == 15: # They are moving someone from their bench
-                            self.player0BenchSize -= 1
-                        else:
-                            self.player0PiecesPositions.remove(self.playerSelection) # They are moving an already existing piece on the board remove the old piece position
-                        if self.playerConversion[position] in self.player1PiecesPositions: # If the new piece position in the other players positions remove the board and add it to the other players bench
-                            self.player1PiecesPositions.remove(self.playerConversion[position])
-                            self.player1BenchSize+=1
-                        self.player0PiecesPositions.append(self.playerConversion[position]) # Add the new position of the piece
-                        if self.playerConversion[position] not in self.doubleRollSpaces: # They have moved a piece onto a second turn postion
-                            self.nextPlayerToPlay = 1
-                        self.player0Roll = randint(0,4)
+                # Handel zero rolls
+                if self.player0Roll != 0:
+                    # Check if they already have something selected or if they are trying to select something
+                    if self.playerSelection == None:
+                        # If they are trying to select something check if they have clicked on something valid
+                        if self.playerConversion[position] in self.player0PiecesPositions or self.playerConversion[position] == 15:
+                            self.playerSelection = self.playerConversion[position]
                         return self.render(0)
                     else:
-                        self.playerSelection = None
-                        return self.render(0)
+                        # If they have already selected something check if the move they are requesting is valid
+                        if (self.playerSelection==15 and self.playerConversion[position] == self.player0Roll - 1) and not self.playerConversion[position] in self.player0PiecesPositions: # They are moving a piece off the board 
+                            # Check for win condition
+                            print("move Ok")
+                            self.player0PiecesPositions.append(self.playerConversion[position])
+                            self.player0BenchSize -= 1
+                            self.nextPlayerToPlay = 1
+                            if len(self.player0PiecesPositions) == 0  and self.player0BenchSize == 0: 
+                                self.player0won = True
+                            self.player0Roll = randint(0,4)
+                            self.playerSelection = None
+                            return self.render(0)
+                        elif self.playerConversion[position] - self.player0Roll == self.playerSelection and not self.playerConversion[position] in self.player0PiecesPositions:
+                            self.player0PiecesPositions.remove(self.playerSelection) # They are moving an already existing piece on the board remove the old piece position
+                            if self.playerConversion[position] in self.player1PiecesPositions and self.playerConversion[position] in range(4,12): # If the new piece position in the other players positions remove the board and add it to the other players bench
+                                self.player1PiecesPositions.remove(self.playerConversion[position])
+                                self.player1BenchSize+=1
+                            self.player0PiecesPositions.append(self.playerConversion[position]) # Add the new position of the piece
+                            if self.playerConversion[position] not in self.doubleRollSpaces: # They have moved a piece onto a second turn postion
+                                self.nextPlayerToPlay = 1
+                            self.player0Roll = randint(0,4)
+                            self.playerSelection = None
+                            return self.render(0)
+                        else:
+                            self.playerSelection = None
+                            return self.render(0)
+                else:
+                    self.nextPlayerToPlay = 1
+                    return self.render(0)
             else:
                 return self.render(0) # If it is not their turn return their board state nothing else
 
-        return self.render(0)
+            return self.render(0)
 
-        # Handel player 1 making a click
+        # Handel player 0 making a click
         if ip == self.player1Ip:
             # Check if it is their turn and check if it is a valid move
             if self.nextPlayerToPlay == 1 and position in self.playerConversion.keys(): 
-            # Check if they already have something selected or if they are trying to select something
-                if self.playerSelection == None:
-                    # If they are trying to select something check if they have clicked on something valid
-                    if self.playerConversion[position] in self.player1PiecesPositions or self.playerConversion[position] == 15:
-                        self.playerSelection = self.playerConversion[position]
-                    return self.render(1)
-                else:
-                    # If they have already selected something check if the move they are requesting is valid
-                    if self.playerConversion[position] == 14 and self.playerConversion[position] - self.player1Roll <= self.playerSelection: # They are moving a piece off the board 
-                        self.player1PiecesPositions.remove(self.playerSelection) # Remove that piece from the board
-                        # Check for win condition
-                        if len(self.player1PiecesPositions) == 0  and self.player1BenchSize == 0: 
-                            self.player1won = True
-                        self.player1Roll = randint(0,4)
-                        return self.render(1)
-                    elif self.playerConversion[position] - self.player1Roll == self.playerSelection and not self.playerConversion[position] in self.player1PiecesPositions:
-                        if self.playerSelection == 15: # They are moving someone from their bench
-                            self.player1BenchSize -= 1
-                        else:
-                            self.player1PiecesPositions.remove(self.playerSelection) # They are moving an already existing piece on the board remove the old piece position
-                        if self.playerConversion[position] in self.player1PiecesPositions: # If the new piece position in the other players positions remove the board and add it to the other players bench
-                            self.player1PiecesPositions.remove(self.playerConversion[position])
-                            self.player1BenchSize+=1
-                        self.player1PiecesPositions.append(self.playerConversion[position]) # Add the new position of the piece
-                        if self.playerConversion[position] not in self.doubleRollSpaces: # They have moved a piece onto a second turn postion
-                            self.nextPlayerToPlay = 1
-                        self.player1Roll = randint(0,4)
+                # Handel zero rolls
+                if self.player1Roll != 0:
+                    # Check if they already have something selected or if they are trying to select something
+                    if self.playerSelection == None:
+                        # If they are trying to select something check if they have clicked on something valid
+                        if self.playerConversion[position] in self.player1PiecesPositions or self.playerConversion[position] == 15:
+                            self.playerSelection = self.playerConversion[position]
                         return self.render(1)
                     else:
-                        self.playerSelection = None
-                        return self.render(1)
+                        # If they have already selected something check if the move they are requesting is valid
+                        if (self.playerSelection==15 and self.playerConversion[position] == self.player1Roll - 1) and not self.playerConversion[position] in self.player0PiecesPositions: # They are moving a piece off the board 
+                            # Check for win condition
+                            print("move Ok")
+                            self.player1PiecesPositions.append(self.playerConversion[position])
+                            self.player1BenchSize -= 1
+                            self.nextPlayerToPlay = 0
+                            if len(self.player1PiecesPositions) == 0  and self.player1BenchSize == 0: 
+                                self.player1won = True
+                            self.player1Roll = randint(0,4)
+                            self.playerSelection = None
+                            return self.render(1)
+                        elif self.playerConversion[position] - self.player1Roll == self.playerSelection and not self.playerConversion[position] in self.player1PiecesPositions:
+                            self.player1PiecesPositions.remove(self.playerSelection) # They are moving an already existing piece on the board remove the old piece position
+                            if self.playerConversion[position] in self.player1PiecesPositions and self.playerConversion[position] in range(4,12): # If the new piece position in the other players positions remove the board and add it to the other players bench
+                                self.player1PiecesPositions.remove(self.playerConversion[position])
+                                self.player1BenchSize+=1
+                            self.player1PiecesPositions.append(self.playerConversion[position]) # Add the new position of the piece
+                            if self.playerConversion[position] not in self.doubleRollSpaces: # They have moved a piece onto a second turn postion
+                                self.nextPlayerToPlay = 0
+                            self.player1Roll = randint(0,4)
+                            self.playerSelection = None
+                            return self.render(1)
+                        else:
+                            self.playerSelection = None
+                            return self.render(1)
+                else:
+                    self.nextPlayerToPlay = 1
+                    return self.render(1)
             else:
-                return self.render(-1) # If it is not their turn return their board state nothing else
+                return self.render(1) # If it is not their turn return their board state nothing else
+
+            return self.render(1)
 
 
     def render(self, player):
@@ -148,6 +166,7 @@ class Game():
             'gameOver'   = bool if game over,   
         }
         '''
+        print("render: " + str(player))
         boardState = []
         for _ in range(24):
             boardState.append("")
@@ -223,12 +242,8 @@ class Game():
             boardState[4] = str(self.player0BenchSize)
         boardState[20]  = str(self.player1BenchSize) 
 
-        #print(self.playerSelection)
-        if yourTurn and print(self.playerSelection) != None:    
-            #print(convertPlayerMain[self.playerSelection])
+        if yourTurn and self.playerSelection != None:    
             boardState[convertPlayerMain[self.playerSelection]] = "[" + boardState[convertPlayerMain[self.playerSelection]] + "]"
-
-
 
         returnValue = {
             'gameState' : boardState,
