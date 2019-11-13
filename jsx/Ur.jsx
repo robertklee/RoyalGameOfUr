@@ -204,12 +204,12 @@ render() {
         <input type="submit" value="Submit" />
       </form>
 
-      <text>
+      <form>
         <label>
           Dice Roll: 
           <input type="text" value={this.state.diceRoll} readOnly={true}/>
         </label>
-      </text>
+      </form>
     </div>
   );
 }

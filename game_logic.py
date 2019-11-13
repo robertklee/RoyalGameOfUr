@@ -88,7 +88,7 @@ class Game():
                             return self.render(0)
                         elif self.playerConversion[position] - self.player0Roll == self.playerSelection and not self.playerConversion[position] in self.player0PiecesPositions:
                             self.player0PiecesPositions.remove(self.playerSelection) # They are moving an already existing piece on the board remove the old piece position
-                            if self.playerConversion[position] in self.player1PiecesPositions and self.playerConversion[position] in range(4,12): # If the new piece position in the other players positions remove the board and add it to the other players bench
+                            if self.playerConversion[position] in self.player1PiecesPositions and self.playerConversion[position] in range(3,12): # If the new piece position in the other players positions remove the board and add it to the other players bench
                                 self.player1PiecesPositions.remove(self.playerConversion[position])
                                 self.player1BenchSize+=1
                             self.player0PiecesPositions.append(self.playerConversion[position]) # Add the new position of the piece
@@ -102,6 +102,7 @@ class Game():
                             return self.render(0)
                 else:
                     self.nextPlayerToPlay = 1
+                    self.player0Roll = randint(1,4)
                     return self.render(0)
             else:
                 return self.render(0) # If it is not their turn return their board state nothing else
@@ -122,7 +123,7 @@ class Game():
                         return self.render(1)
                     else:
                         # If they have already selected something check if the move they are requesting is valid
-                        if (self.playerSelection==15 and self.playerConversion[position] == self.player1Roll - 1) and not self.playerConversion[position] in self.player0PiecesPositions: # They are moving a piece off the board 
+                        if (self.playerSelection==15 and self.playerConversion[position] == self.player1Roll - 1) and not self.playerConversion[position] in self.player1PiecesPositions: # They are moving a piece off the board 
                             # Check for win condition
                             print("move Ok")
                             self.player1PiecesPositions.append(self.playerConversion[position])
@@ -135,7 +136,7 @@ class Game():
                             return self.render(1)
                         elif self.playerConversion[position] - self.player1Roll == self.playerSelection and not self.playerConversion[position] in self.player1PiecesPositions:
                             self.player1PiecesPositions.remove(self.playerSelection) # They are moving an already existing piece on the board remove the old piece position
-                            if self.playerConversion[position] in self.player1PiecesPositions and self.playerConversion[position] in range(4,12): # If the new piece position in the other players positions remove the board and add it to the other players bench
+                            if self.playerConversion[position] in self.player1PiecesPositions and self.playerConversion[position] in range(3,12): # If the new piece position in the other players positions remove the board and add it to the other players bench
                                 self.player1PiecesPositions.remove(self.playerConversion[position])
                                 self.player1BenchSize+=1
                             self.player1PiecesPositions.append(self.playerConversion[position]) # Add the new position of the piece
@@ -148,7 +149,8 @@ class Game():
                             self.playerSelection = None
                             return self.render(1)
                 else:
-                    self.nextPlayerToPlay = 1
+                    self.nextPlayerToPlay = 0
+                    self.player1Roll = randint(0,4)
                     return self.render(1)
             else:
                 return self.render(1) # If it is not their turn return their board state nothing else
