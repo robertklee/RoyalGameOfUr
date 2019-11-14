@@ -28,14 +28,16 @@ def root():
 @app.put('/hiddenRequest')
 def test():
   data_bytes = request._get_body_string()
-  print(request.environ.get('REMOTE_ADDR'))
+  # print(request.environ.get('REMOTE_ADDR'))
   request_data = json.loads(data_bytes)
+  cookie = request_data['cookie']
+  print('cookie value: ' + cookie)
   returnVal = None
   # Handel new clients 
   print(request_data)
   if request_data['game_key'] not in games.keys():
-    games[request_data['game_key']] = Game(request.environ.get('REMOTE_ADDR'))
-    returnVal = games[request_data['game_key']].handelClick(request.environ.get('REMOTE_ADDR'), request_data['clickPosition'])
+    games[request_data['game_key']] = Game(cookie)
+    returnVal = games[request_data['game_key']].handelClick(cookie, request_data['clickPosition'])
   else:
     returnVal = games[request_data['game_key']].handelClick(request.environ.get('REMOTE_ADDR'), request_data['clickPosition'])
   return HTTPResponse(
