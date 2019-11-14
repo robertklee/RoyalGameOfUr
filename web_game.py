@@ -39,7 +39,7 @@ def test():
     games[request_data['game_key']] = Game(cookie)
     returnVal = games[request_data['game_key']].handleClick(cookie, request_data['clickPosition'])
   else:
-    returnVal = games[request_data['game_key']].handleClick(handelClick(request.environ.get('REMOTE_ADDR'), request_data['clickPosition'])
+    returnVal = games[request_data['game_key']].handleClick(cookie, request_data['clickPosition'])
   return HTTPResponse(
           status=200,
           headers={
