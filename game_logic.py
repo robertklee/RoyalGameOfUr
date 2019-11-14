@@ -8,21 +8,26 @@ randintMin = 0
 randintMax = 0
 
 class Player():
+    benchPosition = -1
+    endPosition = 14
+    contestedPositionStart = 4
+    contestedPositionEnd = 11
+    doubleRollSpaces = [13, 7, 3]
     playerConversion = {
-            8:4,
+            8:contestedPositionStart,
             9:5,
             10:6,
             11:7,
             12:8,
             13:9,
             14:10,
-            15:11,
+            15:contestedPositionEnd,
             16:3,
             17:2,
             18:1,
             19:0,
-            20:15,
-            21:14,
+            20:benchPosition, # off map
+            21:endPosition, # end
             22:13,
             23:12,
         }
@@ -84,8 +89,11 @@ class Game():
         self.player1Roll = randint(0,4)
         self.playerSelection = None
 
-        self.player0Won = False
-        self.player1Won = False
+        self.gameCompleted = False
+        self.winningPlayer = -1
+
+        self.player0Won = False # TODO delete
+        self.player1Won = False # TODO delete
 
     def handleClick(self, id, position):
         '''
@@ -116,16 +124,63 @@ class Game():
             # Handle zero rolls
             if (player.roll != 0):
                 # Check if they already have something selected or if they are trying to select something
+                selectedLocationTranslated = Player.playerConversion.get(position)
+                assert selectedLocationTranslated != None
+
                 if (player.selectedPiece == None):
                     # If they are trying to select something check if they have clicked on something valid
-                    print("bob")
+                    if selectedLocationTranslated in player.piecePositions or selectedLocationTranslated == 15:
+                        player.selectedPiece = selectedLocationTranslated
+                    return self.render(player.role)
+                else:
+                    # If they have already selected something. check if the move they are requesting is valid
+                    pieceMoveSuccessful = False
+
+                    if (player.selectedPiece == selectedLocationTranslated - player.roll):
+                        # location is valid distance from selected piece
+                        if (Player.contestedPositionStart <= selectedLocationTranslated <= Player.contestedPositionEnd and selectedLocationTranslated in opponent.piecePositions):
+                            # if selected location is on opponent piece, move that piece to their bench
+                            opponent.piecePositions.remove(selectedLocationTranslated)
+                            opponent.benchSize += 1
+                            
+                            pieceMoveSuccessful = True
+                        elif (selectedLocationTranslated not in player.piecePositions):
+                            pieceMoveSuccessful = True
+                    
+                    if pieceMoveSuccessful:
+                        # if the piece was successfully moved
+                        if player.selectedPiece == Player.benchPosition:
+                            player.benchSize -= 1
+                        else: 
+                            player.piecePositions.remove(player.selectedPiece)
+                        
+                        player.piecePositions.append(selectedLocationTranslated)
+
+                        if selectedLocationTranslated in Player.doubleRollSpaces:
+                            # handle double roll locations
+                            self.nextPlayerToPlay = player.role
+                            player.roll = randint(randintMin, randintMax)
+                        else:
+                            # change player
+                            self.nextPlayerToPlay = opponent.role
+                            opponent.roll = randint(randintMin, randintMax)
+                        
+                        player.selectedPiece = None
+
+                        if player.benchSize == 0 and len(player.piecePositions) == 0:
+                            # handle win case
+                            self.gameCompleted = True
+                            self.winningPlayer = player.role
+
+                    return self.render(player.role)
+                        
             else: 
                 self.nextPlayerToPlay = 1 if player.role == 0 else 0
                 opponent.roll = randint(randintMin, randintMax)
                 return self.render(player.role)
         else: 
             return self.render(player.role)
-
+    '''
         # Handle player making a click
         if id == self.player0Id:
             # Check if it is their turn and check if it is a valid move
@@ -235,7 +290,7 @@ class Game():
                 return self.render(1) # If it is not their turn return their board state nothing else
 
             return self.render(1)
-
+        '''
 
     def render(self, player):
         '''
