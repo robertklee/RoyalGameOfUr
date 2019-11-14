@@ -1,14 +1,54 @@
 import numpy as np
+import random
 from random import randint
 
+startingBenchSize = 5
+intialPlayer = 0
+randintMin = 0
+randintMax = 0
+
+class Player():
+    playerConversion = {
+            8:4,
+            9:5,
+            10:6,
+            11:7,
+            12:8,
+            13:9,
+            14:10,
+            15:11,
+            16:3,
+            17:2,
+            18:1,
+            19:0,
+            20:15,
+            21:14,
+            22:13,
+            23:12,
+        }
+    validClickLocations = playerConversion.keys()
+    def __init__(self, id, piecePositions, benchSize, roll, role, selectedPiece):
+        self.id = id
+        self.piecePositions = piecePositions # Intialize board data
+        self.benchSize = benchSize # Initalize the off board bench sizes
+        self.roll = roll
+        self.role = role # Player 1's view is mirrored
+        self.selectedPiece = selectedPiece
+
 class Game():
-    def __init__(self, player0Ip):
-        self.nextPlayerToPlay = 0
+    def __init__(self, player0Id):
+        self.nextPlayerToPlay = intialPlayer
+
+        random.seed()
+
+        self.player0 = Player(player0Id, [], startingBenchSize, randint(randintMax, randintMax), 0, None)
+        self.player1 = Player(None, [], startingBenchSize, randint(randintMin, randintMax), 1, None)
 
         # Initalize the off board bench sizes
-        self.player0BenchSize = 5 
-        self.player1BenchSize = 5 
+        self.player0BenchSize = startingBenchSize
+        self.player1BenchSize = startingBenchSize
 
+        
         # Intialize board data
         self.player0PiecesPositions = []
         self.player1PiecesPositions = []
@@ -38,8 +78,8 @@ class Game():
         }
         self.doubleRollSpaces = [13, 7, 3]
 
-        self.player0Ip = player0Ip
-        self.player1Ip = None
+        self.player0Id = player0Id
+        self.player1Id = None
         self.player0Roll = randint(0,4)
         self.player1Roll = randint(0,4)
         self.playerSelection = None
@@ -47,22 +87,47 @@ class Game():
         self.player0Won = False
         self.player1Won = False
 
-    def handleClick(self, ip, position):
+    def handleClick(self, id, position):
         '''
         TODO handle double turns
         '''
-        print(self.player1Roll)
+
         # Handle second player joining
-        if self.player1Ip == None and self.player0Ip != ip:
-            self.player1Ip = ip
-            print("player 1 Ip set")
+        if (self.player1.id == None and id != self.player0.id):
+            self.player1.id = id
+            print("player 1 id set")
             return self.render(1)
         # Handle wrong person attempting to join game
-        if self.player1Ip != None and self.player1Ip != ip and self.player0Ip != ip:
+        elif (self.player1.id != id and self.player0.id != id):
             return self.render(0) # Just return a render of the game from player 0's perspective
-        
-        # Handle player 0 making a click
-        if ip == self.player0Ip:
+
+        player = None
+        opponent = None
+        # determine which player clicked
+        if (id == self.player0.id):
+            player = self.player0
+            opponent = self.player1
+        elif (id == self.player1.id):
+            player = self.player1
+            opponent = self.player0
+
+        # check if it is their turn and check if it's a valid move
+        if (self.nextPlayerToPlay == player.id and position in Player.validClickLocations):
+            # Handle zero rolls
+            if (player.roll != 0):
+                # Check if they already have something selected or if they are trying to select something
+                if (player.selectedPiece == None):
+                    # If they are trying to select something check if they have clicked on something valid
+                    print("bob")
+            else: 
+                self.nextPlayerToPlay = 1 if player.role == 0 else 0
+                opponent.roll = randint(randintMin, randintMax)
+                return self.render(player.role)
+        else: 
+            return self.render(player.role)
+
+        # Handle player making a click
+        if id == self.player0Id:
             # Check if it is their turn and check if it is a valid move
             if self.nextPlayerToPlay == 0 and position in self.playerConversion.keys(): 
                 # Handle zero rolls
@@ -117,7 +182,7 @@ class Game():
             return self.render(0)
 
         # Handle player 0 making a click
-        if ip == self.player1Ip:
+        if id == self.player1Id:
             # Check if it is their turn and check if it is a valid move
             if self.nextPlayerToPlay == 1 and position in self.playerConversion.keys(): 
                 # Handle zero rolls
