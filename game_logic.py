@@ -47,25 +47,25 @@ class Game():
         self.player0Won = False
         self.player1Won = False
 
-    def handelClick(self, ip, position):
+    def handleClick(self, ip, position):
         '''
-        TODO handel double turns
+        TODO handle double turns
         '''
         print(self.player1Roll)
-        # Handel second player joining
+        # Handle second player joining
         if self.player1Ip == None and self.player0Ip != ip:
             self.player1Ip = ip
             print("player 1 Ip set")
             return self.render(1)
-        # Handel wrong person attempting to join game
+        # Handle wrong person attempting to join game
         if self.player1Ip != None and self.player1Ip != ip and self.player0Ip != ip:
             return self.render(0) # Just return a render of the game from player 0's perspective
         
-        # Handel player 0 making a click
+        # Handle player 0 making a click
         if ip == self.player0Ip:
             # Check if it is their turn and check if it is a valid move
             if self.nextPlayerToPlay == 0 and position in self.playerConversion.keys(): 
-                # Handel zero rolls
+                # Handle zero rolls
                 if self.player0Roll != 0:
                     # Check if they already have something selected or if they are trying to select something
                     if self.playerSelection == None:
@@ -116,11 +116,11 @@ class Game():
 
             return self.render(0)
 
-        # Handel player 0 making a click
+        # Handle player 0 making a click
         if ip == self.player1Ip:
             # Check if it is their turn and check if it is a valid move
             if self.nextPlayerToPlay == 1 and position in self.playerConversion.keys(): 
-                # Handel zero rolls
+                # Handle zero rolls
                 if self.player1Roll != 0:
                     # Check if they already have something selected or if they are trying to select something
                     if self.playerSelection == None:

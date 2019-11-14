@@ -33,13 +33,13 @@ def test():
   cookie = request_data['cookie']
   print('cookie value: ' + cookie)
   returnVal = None
-  # Handel new clients 
+  # Handle new clients 
   print(request_data)
   if request_data['game_key'] not in games.keys():
     games[request_data['game_key']] = Game(cookie)
-    returnVal = games[request_data['game_key']].handelClick(cookie, request_data['clickPosition'])
+    returnVal = games[request_data['game_key']].handleClick(cookie, request_data['clickPosition'])
   else:
-    returnVal = games[request_data['game_key']].handelClick(request.environ.get('REMOTE_ADDR'), request_data['clickPosition'])
+    returnVal = games[request_data['game_key']].handleClick(handelClick(request.environ.get('REMOTE_ADDR'), request_data['clickPosition'])
   return HTTPResponse(
           status=200,
           headers={
