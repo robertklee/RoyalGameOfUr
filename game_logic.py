@@ -5,7 +5,7 @@ from random import randint
 startingBenchSize = 5
 intialPlayer = 0
 randintMin = 0
-randintMax = 0
+randintMax = 4
 
 class Player():
     benchPosition = -1
@@ -13,6 +13,12 @@ class Player():
     contestedPositionStart = 4
     contestedPositionEnd = 11
     doubleRollSpaces = [13, 7, 3]
+    '''
+    Each player has it's piece postions as relative to its own bench/ exit
+
+    [ 4][ 5][ 6][ 7][ 8][ 9][10][11]
+    [ 3][ 2][ 1][ 0][-1][14][13][12]
+    '''
     playerConversion = {
             8:contestedPositionStart,
             9:5,
@@ -31,6 +37,43 @@ class Player():
             22:13,
             23:12,
         }
+    
+    convertOpponent = {
+        0 :3,
+        1 :2,
+        2 :1,
+        3 :0,
+        4 :8,
+        5 :9,
+        6 :10,
+        7 :11,
+        8 :12,
+        9 :13,
+        10:14,
+        11:15,
+        12:7,
+        13:6,
+        endPosition:5,
+        benchPosition:4
+    }
+    convertPlayer = {
+        0 :19,
+        1 :18,
+        2 :17,
+        3 :16,
+        4 :8,
+        5 :9,
+        6 :10,
+        7 :11,
+        8 :12,
+        9 :13,
+        10:14,
+        11:15,
+        12:23,
+        13:22,
+        endPosition:21,
+        benchPosition:20
+    }
     validClickLocations = playerConversion.keys()
     def __init__(self, id, piecePositions, benchSize, roll, role, selectedPiece):
         self.id = id
@@ -40,65 +83,38 @@ class Player():
         self.role = role # Player 1's view is mirrored
         self.selectedPiece = selectedPiece
 
+    def updateRoll(self):
+        self.roll = randint(randintMin, randintMax)
+
 class Game():
     def __init__(self, player0Id):
         self.nextPlayerToPlay = intialPlayer
 
         random.seed()
 
-        self.player0 = Player(player0Id, [], startingBenchSize, randint(randintMax, randintMax), 0, None)
-        self.player1 = Player(None, [], startingBenchSize, randint(randintMin, randintMax), 1, None)
+        self.player0 = Player(player0Id, [], startingBenchSize, -1, 0, None)
+        self.player1 = Player(None, [], startingBenchSize, -1, 1, None)
+        self.player0.updateRoll()
+        self.player1.updateRoll()
 
-        # Initalize the off board bench sizes
-        self.player0BenchSize = startingBenchSize
-        self.player1BenchSize = startingBenchSize
-
-        
-        # Intialize board data
-        self.player0PiecesPositions = []
-        self.player1PiecesPositions = []
-        '''
-        Each player has it's piece postions as relative to its own bench/ exit
-
-        [ 4][ 5][ 6][ 7][ 8][ 9][10][11]
-        [ 3][ 2][ 1][ 0][15][14][13][12]
-        '''
-        self.playerConversion = {
-            8:4,
-            9:5,
-            10:6,
-            11:7,
-            12:8,
-            13:9,
-            14:10,
-            15:11,
-            16:3,
-            17:2,
-            18:1,
-            19:0,
-            20:15,
-            21:14,
-            22:13,
-            23:12,
-        }
-        self.doubleRollSpaces = [13, 7, 3]
-
-        self.player0Id = player0Id
-        self.player1Id = None
-        self.player0Roll = randint(0,4)
-        self.player1Roll = randint(0,4)
-        self.playerSelection = None
+        print("Player0 roll: " + str(self.player0.roll))
+        print("Player1 roll: " + str(self.player1.roll))
 
         self.gameCompleted = False
         self.winningPlayer = -1
 
-        self.player0Won = False # TODO delete
-        self.player1Won = False # TODO delete
-
     def handleClick(self, id, position):
-        '''
-        TODO handle double turns
-        '''
+        print("Player 0: ")
+        print("piecePositions: " + str(self.player0.piecePositions))
+        print("benchSize: " + str(self.player0.benchSize))
+        print("roll: " + str(self.player0.roll))
+        print("selectedPiece: " + str(self.player0.selectedPiece))
+        
+        print("Player 1: ")
+        print("piecePositions: " + str(self.player1.piecePositions))
+        print("benchSize: " + str(self.player1.benchSize))
+        print("roll: " + str(self.player1.roll))
+        print("selectedPiece: " + str(self.player1.selectedPiece))
 
         # Handle second player joining
         if (self.player1.id == None and id != self.player0.id):
@@ -131,7 +147,6 @@ class Game():
                     # If they are trying to select something check if they have clicked on something valid
                     if selectedLocationTranslated in player.piecePositions or selectedLocationTranslated == 15:
                         player.selectedPiece = selectedLocationTranslated
-                    return self.render(player.role)
                 else:
                     # If they have already selected something. check if the move they are requesting is valid
                     pieceMoveSuccessful = False
@@ -145,13 +160,16 @@ class Game():
                             
                             pieceMoveSuccessful = True
                         elif (selectedLocationTranslated not in player.piecePositions):
+                            # piece will not overlap with existing piece
                             pieceMoveSuccessful = True
                     
                     if pieceMoveSuccessful:
                         # if the piece was successfully moved
                         if player.selectedPiece == Player.benchPosition:
+                            # moved from bench
                             player.benchSize -= 1
                         else: 
+                            # moved from previous location
                             player.piecePositions.remove(player.selectedPiece)
                         
                         player.piecePositions.append(selectedLocationTranslated)
@@ -159,11 +177,11 @@ class Game():
                         if selectedLocationTranslated in Player.doubleRollSpaces:
                             # handle double roll locations
                             self.nextPlayerToPlay = player.role
-                            player.roll = randint(randintMin, randintMax)
+                            player.updateRoll()
                         else:
                             # change player
                             self.nextPlayerToPlay = opponent.role
-                            opponent.roll = randint(randintMin, randintMax)
+                            opponent.updateRoll()
                         
                         player.selectedPiece = None
 
@@ -171,15 +189,12 @@ class Game():
                             # handle win case
                             self.gameCompleted = True
                             self.winningPlayer = player.role
-
-                    return self.render(player.role)
-                        
             else: 
-                self.nextPlayerToPlay = 1 if player.role == 0 else 0
-                opponent.roll = randint(randintMin, randintMax)
-                return self.render(player.role)
-        else: 
-            return self.render(player.role)
+                player.updateRoll()
+                self.nextPlayerToPlay = opponent.role
+                opponent.updateRoll()
+                
+        return self.render(player.role)
     '''
         # Handle player making a click
         if id == self.player0Id:
@@ -292,7 +307,7 @@ class Game():
             return self.render(1)
         '''
 
-    def render(self, player):
+    def render(self, playerRole):
         '''
         player view = {
             'gameState' = [array of 24 strings to show in board state],
@@ -302,86 +317,43 @@ class Game():
             'gameOver'   = bool if game over,   
         }
         '''
-        print("render: " + str(player))
+        print("render: " + str(playerRole))
         boardState = []
         for _ in range(24):
             boardState.append("")
 
-        yourTurn = self.nextPlayerToPlay == player
+        yourTurn = self.nextPlayerToPlay == playerRole
+
+        gameOver = self.gameCompleted
+
         youWon = False
-        if player == 0:
-            youWon = self.player0Won == True
-        else:
-            youWon = self.player0Won == True
+        if (gameOver):
+            youWon = playerRole == self.winningPlayer
+        
+        player = None
+        opponent = None
+        # determine which player clicked
+        if (playerRole == self.player0.role):
+            player = self.player0
+            opponent = self.player1
+        elif (playerRole == self.player1.role):
+            player = self.player1
+            opponent = self.player0
+        
+        rollValue = player.roll
+        print("role: " + str(playerRole) + " roll: " + str(rollValue))
 
+        for value in player.piecePositions:
+            boardState[Player.convertPlayer.get(value)] = "X"
+        
+        for value in opponent.piecePositions:
+            boardState[Player.convertOpponent.get(value)] = "O"
+        
+        boardState[Player.convertPlayer.get(Player.benchPosition)] = str(player.benchSize)
+        boardState[Player.convertOpponent.get(Player.benchPosition)] = str(opponent.benchSize)
 
-        gameOver = self.player0Won == True or self.player1Won == True
-        rollValue = None
-
-        if player == 0:
-            rollValue = self.player0Roll
-            pass
-        elif player == 1:
-            rollValue = self.player1Roll
-            pass
-
-        convertPlayerOff = {
-            0 :3,
-            1 :2,
-            2 :1,
-            3 :0,
-            4 :8,
-            5 :9,
-            6 :10,
-            7 :11,
-            8 :12,
-            9 :13,
-            10:14,
-            11:15,
-            12:7,
-            13:6,
-            14:5,
-        }
-        convertPlayerMain = {
-            0 :19,
-            1 :18,
-            2 :17,
-            3 :16,
-            4 :8,
-            5 :9,
-            6 :10,
-            7 :11,
-            8 :12,
-            9 :13,
-            10:14,
-            11:15,
-            12:23,
-            13:22,
-            14:21,
-            15:20
-        }
-
-        for value in self.player1PiecesPositions:
-            if player == 1:
-                boardState[convertPlayerMain[value]] = "O"
-            else:
-                boardState[convertPlayerOff[value]] = "O"
-
-        for value in self.player0PiecesPositions:
-            if player == 0:
-                boardState[convertPlayerMain[value]] = "X"
-            else:
-                boardState[convertPlayerOff[value]] = "X"
-
-        if player == 0:
-            boardState[20] = str(self.player0BenchSize)
-            boardState[4]  = str(self.player1BenchSize)
-        else:
-            boardState[4] = str(self.player0BenchSize)
-            boardState[20]  = str(self.player1BenchSize) 
-
-        if yourTurn and self.playerSelection != None:    
-            boardState[convertPlayerMain[self.playerSelection]] = "[" + boardState[convertPlayerMain[self.playerSelection]] + "]"
+        if (yourTurn and player.selectedPiece != None):
+            boardState[Player.convertPlayer.get(player.selectedPiece)] = "[" + boardState[Player.convertPlayer.get(player.selectedPiece)] + "]"
 
         returnValue = {
             'gameState' : boardState,
