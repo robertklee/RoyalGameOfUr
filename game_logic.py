@@ -84,7 +84,7 @@ class Player():
         self.selectedPiece = selectedPiece
 
     def updateRoll(self):
-        self.roll = randint(randintMin, randintMax)
+        self.roll = randint(0, 1) + randint(0, 1) + randint(0, 1) + randint(0, 1)
 
 class Game():
     def __init__(self, player0Id):
@@ -102,6 +102,21 @@ class Game():
 
         self.gameCompleted = False
         self.winningPlayer = -1
+
+    def checkMoveExists(self, piecePos, roll, benchSize):
+        '''
+        Returns true if move exists returns false if no move exists
+        '''
+        # Check if any piece can move off the board
+        if max(piecePos) + roll >= 14:
+            return True 
+        # Check if you can move a piece forward without hitting another piece 
+        for pos in piecePos:
+            if pos + roll not in piecePos:
+                return True
+        # check if you can move a piece off your bench
+        if benchSize > 0 and roll - 1 not in piecePos:
+            return True
 
     def handleClick(self, id, position):
         print("Player 0: ")
