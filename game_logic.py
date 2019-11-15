@@ -173,6 +173,8 @@ class Game():
                     # If they are trying to select something check if they have clicked on something valid
                     if selectedLocationTranslated in player.piecePositions or selectedLocationTranslated == Player.benchPosition:
                         player.selectedPiece = selectedLocationTranslated
+                elif (selectedLocationTranslated == player.selectedPiece):
+                    player.selectedPiece = None
                 else:
                     # If they have already selected something. check if the move they are requesting is valid
                     pieceMoveSuccessful = False
