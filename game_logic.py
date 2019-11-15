@@ -179,16 +179,18 @@ class Game():
                     # If they have already selected something. check if the move they are requesting is valid
                     pieceMoveSuccessful = False
 
-                    if (player.selectedPiece == selectedLocationTranslated - player.roll or player.selectedPiece + player.roll > Player.endPosition):
-                        # location is valid distance from selected piece
-                        if (Player.contestedPositionStart <= selectedLocationTranslated <= Player.contestedPositionEnd and selectedLocationTranslated in opponent.piecePositions):
+                    if (player.selectedPiece == selectedLocationTranslated - player.roll or \
+                        (selectedLocationTranslated > Player.endPosition and player.selectedPiece + player.roll > Player.endPosition)):
+                        # location is valid distance from selected piece or moves off board
+                        if (Player.contestedPositionStart <= selectedLocationTranslated <= Player.contestedPositionEnd and \
+                            selectedLocationTranslated in opponent.piecePositions):
                             # if selected location is on opponent piece, move that piece to their bench
                             opponent.piecePositions.remove(selectedLocationTranslated)
                             opponent.benchSize += 1
                             
                             pieceMoveSuccessful = True
                         elif (selectedLocationTranslated not in player.piecePositions):
-                            # piece will not overlap with existing piece
+                            # piece will not overlap with existing piece except when piece moves off board
                             pieceMoveSuccessful = True
                     
                     if pieceMoveSuccessful:
@@ -200,7 +202,8 @@ class Game():
                             # moved from previous location
                             player.piecePositions.remove(player.selectedPiece)
                         
-                        player.piecePositions.append(selectedLocationTranslated)
+                        if (selectedLocationTranslated <= Player.endPosition):
+                            player.piecePositions.append(selectedLocationTranslated)
 
                         if selectedLocationTranslated in Player.doubleRollSpaces:
                             # handle double roll locations
