@@ -241,7 +241,7 @@ class Game():
         '''
         player view = {
             'gameState' = [array of 24 strings to show in board state],
-            'yourTurn'   = bool if it is their turn,
+            'status'    = string showing their game connection/turn/win status,
             'rollValue'  = int [0-4] their roll value,
             'youWon'     = bool if they have won,
             'gameOver'   = bool if game over,   
@@ -252,13 +252,21 @@ class Game():
         for _ in range(24):
             boardState.append("")
 
-        yourTurn = self.nextPlayerToPlay == playerRole
+        message = ''
 
+        yourTurn = self.nextPlayerToPlay == playerRole
         gameOver = self.gameCompleted
+
+        gameConnected = self.player1.id != None
 
         youWon = False
         if (gameOver):
             youWon = playerRole == self.winningPlayer
+            message = "Congratulations! You won!" if youWon else "Game over!"
+        elif gameConnected:
+            message = "It's Your Turn!" if yourTurn else "Opponent's Turn!"
+        else:
+            message = "Waiting for opponent..."
         
         player = None
         opponent = None
@@ -286,7 +294,7 @@ class Game():
 
         returnValue = {
             'gameState' : boardState,
-            'yourTurn'  : "It's Your Turn!" if yourTurn else "Opponent's Turn!",
+            'message'  : message,
             'rollValue' : rollValue,
             'youWon'    : youWon,
             'gameOver'  : gameOver,

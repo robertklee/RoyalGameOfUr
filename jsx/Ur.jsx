@@ -122,7 +122,7 @@ constructor(props) {
     currentDisplay: Array(40).fill(""),
     diceRoll: -1,
     cookie: cookieValue,
-    yourTurn : "",
+    message : "",
   };
 
   this.handleGameKeyChange = this.handleGameKeyChange.bind(this);
@@ -227,7 +227,7 @@ render() {
       </form>
       <form>
         <label>
-          <input type="text" value={this.state.yourTurn} readOnly={true}/>
+          <input type="text" value={this.state.message} readOnly={true}/>
         </label>
       </form>
     </div>
@@ -254,7 +254,7 @@ function sendDataToServer(targetobject, data) {
     targetobject.setState({
       currentDisplay : gamestate["gameState"],
       diceRoll: gamestate["rollValue"],
-      yourTurn: gamestate["yourTurn"]
+      message: gamestate["message"]
     })
   }
   request.send(JSON.stringify(data));
