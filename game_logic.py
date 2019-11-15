@@ -179,7 +179,7 @@ class Game():
                     # If they have already selected something. check if the move they are requesting is valid
                     pieceMoveSuccessful = False
 
-                    if (player.selectedPiece == selectedLocationTranslated - player.roll):
+                    if (player.selectedPiece == selectedLocationTranslated - player.roll or player.selectedPiece + player.roll >= Player.endPosition):
                         # location is valid distance from selected piece
                         if (Player.contestedPositionStart <= selectedLocationTranslated <= Player.contestedPositionEnd and selectedLocationTranslated in opponent.piecePositions):
                             # if selected location is on opponent piece, move that piece to their bench
