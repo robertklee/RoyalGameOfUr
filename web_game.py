@@ -1,4 +1,5 @@
-import bottle, sys
+import bottle
+import sys
 from bottlereact import BottleReact
 import string
 from bottle import request
@@ -21,49 +22,55 @@ app = bottle.Bottle()
 br = BottleReact(app, prod=PROD, verbose=True)
 
 # Active Game Dict
-games = {} 
+games = {}
 # Database
-conn = sqlite3.connect("Logs") # TODO finish and figure out
+conn = sqlite3.connect("Logs")  # TODO finish and figure out
 curs = conn.cursor()
-curs.execute("CREATE TABLE IF NOT EXISTS Game_Server_Connection_Logs (cookie STRING PRIMARY KEY, accesses INT);")
+curs.execute(
+    "CREATE TABLE IF NOT EXISTS Game_Server_Connection_Logs (cookie STRING PRIMARY KEY, accesses INT);")
 
 
 @app.get('/Game')
 def root():
-  return br.render_html(
-    br.Game({})
-  )
+    return br.render_html(
+        br.Game({})
+    )
+
 
 @app.put('/hiddenRequest')
 def test():
-  data_bytes = request._get_body_string()
+    data_bytes = request._get_body_string()
 
-  request_data = json.loads(data_bytes)
-  cookie = request_data['cookie']
-  returnVal = None
-  # Handle new clients 
-  print(request_data)
-  curs.execute("SELECT COUNT(*) FROM Game_Server_Connection_Logs WHERE cookie=\"" + str(cookie).replace("-","") + "\";")
-  if curs.fetchone()[0] > 0:
-    curs.execute("INSERT INTO Game_Server_Connection_Logs (cookie, accesses) VALUES (\"" + str(cookie).replace("-","") + "\", 1);")
-  else:
-    curs.execute("UPDATE Game_Server_Connection_Logs SET accesses = accesses + 1 WHERE cookie = \"" + str(cookie).replace("-","") + "\";")
-    
+    request_data = json.loads(data_bytes)
+    cookie = request_data['cookie']
+    returnVal = None
+    # Handle new clients
+    print(request_data)
+    curs.execute("SELECT COUNT(*) FROM Game_Server_Connection_Logs WHERE cookie=\"" +
+                 str(cookie).replace("-", "") + "\";")
+    if curs.fetchone()[0] > 0:
+        curs.execute("INSERT INTO Game_Server_Connection_Logs (cookie, accesses) VALUES (\"" +
+                     str(cookie).replace("-", "") + "\", 1);")
+    else:
+        curs.execute("UPDATE Game_Server_Connection_Logs SET accesses = accesses + 1 WHERE cookie = \"" +
+                     str(cookie).replace("-", "") + "\";")
 
-  if request_data['game_key'] not in games.keys():  
-    games[request_data['game_key']] = [Game(cookie), 100]
-    returnVal = games[request_data['game_key']][0].handleClick(cookie, request_data['clickPosition'])
-  else:
-    returnVal = games[request_data['game_key']][0].handleClick(cookie, request_data['clickPosition'])
-    games[request_data['game_key']][1] = 100
-  return HTTPResponse(
-          status=200,
-          headers={
-              "Content-Type": "application/json",
-              # "Access-Control-Allow-Origin": "*",
-          },
-          body=json.dumps(returnVal)
-      )
+    if request_data['game_key'] not in games.keys():
+        games[request_data['game_key']] = [Game(cookie), 100]
+        returnVal = games[request_data['game_key']][0].handleClick(
+            cookie, request_data['clickPosition'])
+    else:
+        returnVal = games[request_data['game_key']][0].handleClick(
+            cookie, request_data['clickPosition'])
+        games[request_data['game_key']][1] = 100
+    return HTTPResponse(
+        status=200,
+        headers={
+            "Content-Type": "application/json",
+            # "Access-Control-Allow-Origin": "*",
+        },
+        body=json.dumps(returnVal)
+    )
 
 # @bottle.route('/<:re:.*>', method='OPTIONS')
 # def enable_cors_generic_route():
@@ -95,24 +102,25 @@ def test():
 
 
 def TTL():
-  while (True):
-    for game_key in games.keys():
-      games[game_key][1] -= 1
-      if games[game_key][1] <= 0:
-        games.popitem(game_key)
-    time.sleep(6)
-    
+    while (True):
+        for game_key in games.keys():
+            games[game_key][1] -= 1
+            if games[game_key][1] <= 0:
+                games.popitem(game_key)
+        time.sleep(6)
+
 
 def run():
-  x = threading.Thread(target=TTL, args=())
-  x.start()
-  bottle.debug(not PROD)
-  bottle.run(
-    app=app, 
-    host='localhost',
-    port='2081',
-    reloader=not PROD
-  )
+    x = threading.Thread(target=TTL, args=())
+    x.start()
+    bottle.debug(not PROD)
+    bottle.run(
+        app=app,
+        host='localhost',
+        port='2081',
+        reloader=not PROD
+    )
 
-if __name__=='__main__':
-  run()
+
+if __name__ == '__main__':
+    run()
