@@ -102,11 +102,11 @@ render() {
 
 var cookieName = "UrGameCookie";
 var cookieDays = 14;
+var keyLength = 6;
 
 class Game extends React.Component {
 
 constructor(props) {
-  let keyLength = 6;
   let r = generateId().substring(0,keyLength);
   console.log("Game Key: ", r);
   super(props);
@@ -176,17 +176,23 @@ handleClick(i) {
 // }
 
 handleGameKeySubmit(event) {
-  this.setState({gameKeyTextBox: this.state.gameKeyTextBox.toUpperCase()} )
-  this.setState({gameKey: this.state.gameKeyTextBox} )
+  if (this.state.gameKeyTextBox.length != keyLength) {
+    alert("Game Key length is invalid. Please ensure it is of length: " + keyLength);
+    
+    this.setState({gameKeyTextBox: this.state.gameKey} )
+  } else {
+    this.setState({gameKeyTextBox: this.state.gameKeyTextBox.toUpperCase()} )
+    this.setState({gameKey: this.state.gameKeyTextBox} )
+    
+    var data = {
+      clickPosition: -1,
+      game_key: this.state.gameKey,
+      cookie: this.state.cookie,
+    };
+
+    sendDataToServer(this, data);
+  }
   
-  var data = {
-    clickPosition: -1,
-    game_key: this.state.gameKey,
-    cookie: this.state.cookie,
-  };
-
-  sendDataToServer(this, data)
-
   event.preventDefault();
 }
 
