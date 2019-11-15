@@ -180,7 +180,7 @@ class Game():
                     pieceMoveSuccessful = False
 
                     if (player.selectedPiece == selectedLocationTranslated - player.roll or \
-                        (selectedLocationTranslated > Player.endPosition and player.selectedPiece + player.roll > Player.endPosition)):
+                        (selectedLocationTranslated >= Player.endPosition and player.selectedPiece + player.roll >= Player.endPosition)):
                         # location is valid distance from selected piece or moves off board
                         if (Player.contestedPositionStart <= selectedLocationTranslated <= Player.contestedPositionEnd and \
                             selectedLocationTranslated in opponent.piecePositions):
@@ -202,7 +202,7 @@ class Game():
                             # moved from previous location
                             player.piecePositions.remove(player.selectedPiece)
                         
-                        if (selectedLocationTranslated <= Player.endPosition):
+                        if (selectedLocationTranslated < Player.endPosition):
                             player.piecePositions.append(selectedLocationTranslated)
 
                         if selectedLocationTranslated in Player.doubleRollSpaces:
