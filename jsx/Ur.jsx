@@ -123,6 +123,7 @@ constructor(props) {
     diceRoll: -1,
     cookie: cookieValue,
     message : "",
+    gameKeyTextBox: r.toUpperCase()
   };
 
   this.handleGameKeyChange = this.handleGameKeyChange.bind(this);
@@ -130,12 +131,13 @@ constructor(props) {
 }
 
 componentDidMount() {
-  this.intervalID = setInterval(
-    () => sendDataToServer(this, {
-      clickPosition: -1,
-      game_key: this.state.gameKey,
-      cookie: this.state.cookie
-    }),
+  this.intervalID = setInterval(() => {
+    sendDataToServer(this, {
+        clickPosition: -1,
+        game_key: this.state.gameKey,
+        cookie: this.state.cookie
+      })
+    },
     1000
   );
 }
@@ -174,8 +176,8 @@ handleClick(i) {
 // }
 
 handleGameKeySubmit(event) {
-  this.state.gameKey = this.state.gameKey.toUpperCase()
-  this.setState({gameKey: this.state.gameKey.toUpperCase()} )
+  this.setState({gameKeyTextBox: this.state.gameKeyTextBox.toUpperCase()} )
+  this.setState({gameKey: this.state.gameKeyTextBox} )
   
   var data = {
     clickPosition: -1,
@@ -186,11 +188,10 @@ handleGameKeySubmit(event) {
   sendDataToServer(this, data)
 
   event.preventDefault();
-
 }
 
 handleGameKeyChange(event) {
-  this.setState({gameKey: event.target.value} ) 
+  this.setState({gameKeyTextBox: event.target.value} ) 
 }
 
 render() {
@@ -214,7 +215,7 @@ render() {
       <form onSubmit={this.handleGameKeySubmit}>
         <label>
           Game Key: 
-          <input type="text" value={this.state.gameKey} onChange={this.handleGameKeyChange } autoCorrect="off" autoCapitalize="none"/>
+          <input type="text" value={this.state.gameKeyTextBox} onChange={this.handleGameKeyChange } autoCorrect="off" autoCapitalize="none"/>
         </label>
         <input type="submit" value="Submit" />
       </form>
