@@ -273,9 +273,9 @@ class Game():
         youWon = False
         if (gameOver):
             youWon = playerRole == self.winningPlayer
-            message = "Congratulations! You won!" if youWon else "Game over!"
+            message = "Congrats! You won!" if youWon else "Game over!"
         elif gameConnected:
-            message = "It's Your Turn!" if yourTurn else "Opponent's Turn!"
+            message = "It's your turn!" if yourTurn else "Opponent's turn!"
         else:
             message = "Waiting for opponent..."
         
