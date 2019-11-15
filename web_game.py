@@ -4,6 +4,7 @@ import string
 from bottle import request
 import json
 from bottle import HTTPResponse
+from datetime import datetime, timedelta
 
 from game_logic import Game
 
@@ -18,6 +19,8 @@ app = bottle.Bottle()
 br = BottleReact(app, prod=PROD, verbose=True)
 
 games = {} 
+previousCheck = datetime.today()
+checkDelta = timedelta(0, 20, 0)
 
 @app.get('/Game')
 def root():
@@ -34,6 +37,11 @@ def test():
   returnVal = None
   # Handle new clients 
   print(request_data)
+
+  if (datetime.today() - previousCheck > checkDelta):
+    gameManager()
+    previousCheck = datetime.today()
+
   if request_data['game_key'] not in games.keys():
     games[request_data['game_key']] = Game(cookie)
     returnVal = games[request_data['game_key']].handleClick(cookie, request_data['clickPosition'])
@@ -47,6 +55,20 @@ def test():
           },
           body=json.dumps(returnVal)
       )
+
+def gameManager():
+  for k, v in games.items():
+    delta = datetime.today() - v.mostRecentValidClick
+    if delta > Game.timeDeltaForSuspension:
+      v.suspended = True
+  
+  if (len(games) > Game.maxActiveGames):
+    for k, v in games.items():
+      if v.suspended:
+        del games[k]
+      
+      if (len(games) <= Game.maxActiveGames):
+        break
 
 # @bottle.route('/<:re:.*>', method='OPTIONS')
 # def enable_cors_generic_route():
