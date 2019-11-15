@@ -4,8 +4,20 @@ from random import randint
 
 startingBenchSize = 5
 intialPlayer = 0
-randintMin = 0
-randintMax = 4
+
+diceMin = 0
+diceMax = 1
+numDice = 4
+
+assert diceMax > diceMin
+possibleOptions = range(diceMin,diceMax+1)
+diceMean = np.cumsum(possibleOptions)[-1] / len(possibleOptions)
+
+possibleOptionsSquared = [x**2 for x in possibleOptions]
+diceVariance = np.cumsum(possibleOptionsSquared)[-1] / len(possibleOptionsSquared) - diceMean**2
+
+diceSumMean = numDice*diceMean
+diceSumVariance = numDice*diceVariance
 
 class Player():
     benchPosition = -1
@@ -84,14 +96,13 @@ class Player():
         self.selectedPiece = selectedPiece
 
     def updateRoll(self):
-        # rolling 4 dice, each with either 0 or 1 value, results in
-        # mean of 4*0.5 and variance of 4*0.25
-        normal = np.round(np.random.normal(2,1,1))[0]
-        if normal < 0:
-            normal = 0
+        # rolling numDice dice, with values between diceMin or diceMax, and summing
+        normal = np.round(np.random.normal(diceSumMean,diceSumVariance,1))[0]
+        if normal < numDice * diceMin:
+            normal = numDice * diceMin
         
-        if normal > 4:
-            normal = 4
+        if normal > numDice * diceMax:
+            normal = numDice * diceMax
         
         self.roll = normal
     
