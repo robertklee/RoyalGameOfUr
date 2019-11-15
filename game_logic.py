@@ -171,7 +171,8 @@ class Game():
 
                 if (player.selectedPiece == None):
                     # If they are trying to select something check if they have clicked on something valid
-                    if selectedLocationTranslated in player.piecePositions or selectedLocationTranslated == Player.benchPosition:
+                    if selectedLocationTranslated in player.piecePositions or \
+                        (selectedLocationTranslated == Player.benchPosition and player.benchSize > 0):
                         player.selectedPiece = selectedLocationTranslated
                 elif (selectedLocationTranslated == player.selectedPiece):
                     player.selectedPiece = None
