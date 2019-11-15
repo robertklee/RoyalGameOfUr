@@ -107,10 +107,12 @@ var keyLength = 6;
 class Game extends React.Component {
 
 constructor(props) {
+  // generate game key
   let r = generateId().substring(0,keyLength);
   console.log("Game Key: ", r);
   super(props);
 
+  // generate unique identifier for cookie
   var cookieValue = readCookie(cookieName)
   if (!cookieValue) {
     cookieValue = uuidv4();
@@ -310,6 +312,8 @@ function dec2hex (dec) {
 // generateId :: Integer -> String
 function generateId (len) {
   var arr = new Uint8Array((len || 40) / 2)
+  // The crypto.getRandomValues() method lets you get cryptographically strong random values. 
+  // The array given as the parameter is filled with random numbers (random in its cryptographic meaning).
   window.crypto.getRandomValues(arr)
   return Array.from(arr, dec2hex).join('')
 }
