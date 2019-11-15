@@ -122,6 +122,7 @@ constructor(props) {
     currentDisplay: Array(40).fill(""),
     diceRoll: -1,
     cookie: cookieValue,
+    yourTurn : "",
   };
 
   this.handleGameKeyChange = this.handleGameKeyChange.bind(this);
@@ -224,6 +225,11 @@ render() {
           <input type="text" value={this.state.diceRoll} readOnly={true}/>
         </label>
       </form>
+      <form>
+        <label>
+          <input type="text" value={this.state.yourTurn} readOnly={true}/>
+        </label>
+      </form>
     </div>
   );
 }
@@ -248,6 +254,7 @@ function sendDataToServer(targetobject, data) {
     targetobject.setState({
       currentDisplay : gamestate["gameState"],
       diceRoll: gamestate["rollValue"],
+      yourTurn: gamestate["yourTurn"]
     })
   }
   request.send(JSON.stringify(data));

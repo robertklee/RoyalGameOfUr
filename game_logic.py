@@ -372,10 +372,14 @@ class Game():
 
         returnValue = {
             'gameState' : boardState,
-            'yourTurn'  : yourTurn,
+            'yourTurn'  : "",
             'rollValue' : rollValue,
             'youWon'    : youWon,
             'gameOver'  : gameOver,
         }
+        
+        if yourTurn: 
+            returnValue['yourTurn'] = "It's Your Turn!" 
+        else: returnValue['yourTurn'] = "Opponant's Trun!"
 
         return returnValue
