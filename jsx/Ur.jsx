@@ -19,85 +19,85 @@ function Square(props) {
 }
 
 function Square_nb(props) {
-return (
-  <button className="square square-nb" onClick={props.onClick}>
-    {props.value}
-  </button>
-);
+  return (
+    <button className="square square-nb" onClick={props.onClick}>
+      {props.value}
+    </button>
+  );
 }
 
 class Board extends React.Component {
-renderSquareRed(i) {
-  return (
-    <SquareRed
-      value={this.props.squares[i]}
-      onClick={() => this.props.onClick(i)}
-    />
-  );
-}
+  renderSquareRed(i) {
+    return (
+      <SquareRed
+        value={this.props.squares[i]}
+        onClick={() => this.props.onClick(i)}
+      />
+    );
+  }
 
-renderSquare(i) {
-  return (
-    <Square
-      value={this.props.squares[i]}
-      onClick={() => this.props.onClick(i)}
-    />
-  );
-}
+  renderSquare(i) {
+    return (
+      <Square
+        value={this.props.squares[i]}
+        onClick={() => this.props.onClick(i)}
+      />
+    );
+  }
 
-renderSquare_nb(i) {
+  renderSquare_nb(i) {
     return (
       <Square_nb
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
     );
-}
+  }
 
-renderSquare_nb_noClick(i) {
-  return (
-    <Square_nb
-      value={this.props.squares[i]}
-    />
-  );
-}
+  renderSquare_nb_noClick(i) {
+    return (
+      <Square_nb
+        value={this.props.squares[i]}
+      />
+    );
+  }
 
-render() {
-  return (
-    <div>
-      <div className="board-row">
-        {this.renderSquareRed(0)}
-        {this.renderSquare(1)}
-        {this.renderSquare(2)}
-        {this.renderSquare(3)}
-        {this.renderSquare_nb(4)}
-        {this.renderSquare_nb(5)}
-        {this.renderSquareRed(6)}
-        {this.renderSquare(7)}
+  render() {
+    return (
+      <div>
+        <div className="board-row">
+          {this.renderSquareRed(0)}
+          {this.renderSquare(1)}
+          {this.renderSquare(2)}
+          {this.renderSquare(3)}
+          {this.renderSquare_nb(4)}
+          {this.renderSquare_nb(5)}
+          {this.renderSquareRed(6)}
+          {this.renderSquare(7)}
+        </div>
+        <div className="board-row">
+          {this.renderSquare(8)}
+          {this.renderSquare(9)}
+          {this.renderSquare(10)}
+          {this.renderSquareRed(11)}
+          {this.renderSquare(12)}
+          {this.renderSquare(13)}
+          {this.renderSquare(14)}
+          {this.renderSquare(15)}
+        </div>
+        <div className="board-row">
+          {this.renderSquareRed(16)}
+          {this.renderSquare(17)}
+          {this.renderSquare(18)}
+          {this.renderSquare(19)}
+          {this.renderSquare_nb(20)}
+          {this.renderSquare_nb(21)}
+          {this.renderSquareRed(22)}
+          {this.renderSquare(23)}
+        </div>
       </div>
-      <div className="board-row">
-        {this.renderSquare(8)}
-        {this.renderSquare(9)}
-        {this.renderSquare(10)}
-        {this.renderSquareRed(11)}
-        {this.renderSquare(12)}
-        {this.renderSquare(13)}
-        {this.renderSquare(14)}
-        {this.renderSquare(15)}
-      </div>
-      <div className="board-row">
-        {this.renderSquareRed(16)}
-        {this.renderSquare(17)}
-        {this.renderSquare(18)}
-        {this.renderSquare(19)}
-        {this.renderSquare_nb(20)}
-        {this.renderSquare_nb(21)}
-        {this.renderSquareRed(22)}
-        {this.renderSquare(23)}
-      </div>
-    </div>
-  );
-}
+    );
+  }
 }
 
 var cookieName = "UrGameCookie";
@@ -106,142 +106,142 @@ var keyLength = 6;
 
 class Game extends React.Component {
 
-constructor(props) {
-  // generate game key
-  let r = generateId().substring(0,keyLength);
-  console.log("Game Key: ", r);
-  super(props);
+  constructor(props) {
+    // generate game key
+    let r = generateId().substring(0, keyLength);
+    console.log("Game Key: ", r);
+    super(props);
 
-  // generate unique identifier for cookie
-  var cookieValue = readCookie(cookieName)
-  if (!cookieValue) {
-    cookieValue = uuidv4();
-    createCookie(cookieName, cookieValue, cookieDays);
+    // generate unique identifier for cookie
+    var cookieValue = readCookie(cookieName)
+    if (!cookieValue) {
+      cookieValue = uuidv4();
+      createCookie(cookieName, cookieValue, cookieDays);
+    }
+
+    this.state = {
+      gameKey: r.toUpperCase(),
+      currentDisplay: Array(40).fill(""),
+      diceRoll: -1,
+      cookie: cookieValue,
+      message: "",
+      gameKeyTextBox: r.toUpperCase()
+    };
+
+    this.handleGameKeyChange = this.handleGameKeyChange.bind(this);
+    this.handleGameKeySubmit = this.handleGameKeySubmit.bind(this);
   }
-  
-  this.state = {
-    gameKey: r.toUpperCase(),
-    currentDisplay: Array(40).fill(""),
-    diceRoll: -1,
-    cookie: cookieValue,
-    message : "",
-    gameKeyTextBox: r.toUpperCase()
-  };
 
-  this.handleGameKeyChange = this.handleGameKeyChange.bind(this);
-  this.handleGameKeySubmit = this.handleGameKeySubmit.bind(this);
-}
-
-componentDidMount() {
-  this.intervalID = setInterval(() => {
-    sendDataToServer(this, {
+  componentDidMount() {
+    this.intervalID = setInterval(() => {
+      sendDataToServer(this, {
         clickPosition: -1,
         game_key: this.state.gameKey,
         cookie: this.state.cookie
       })
     },
-    1000
-  );
-}
+      1000
+    );
+  }
 
-componentWillUnmount() {
-  clearInterval(this.intervalID);
-}
+  componentWillUnmount() {
+    clearInterval(this.intervalID);
+  }
 
-handleClick(i) {
-  //const newState = this.state.currentDisplay.slice();
-  //newState[i] = this.state.xIsNext ? "X" : "O";
-  //this.state.xIsNext = !this.state.xIsNext;
-  //this.setState({
-  //  currentDisplay : newState
-  //});
-  // this.getData(i);
-  var data = {
-    clickPosition: i,
-    game_key: this.state.gameKey,
-    cookie: this.state.cookie,
-  };
-
-  sendDataToServer(this, data);
-}
-
-// getData(i) {
-//   // create a new XMLHttpRequest
-//   var xhr = new XMLHttpRequest()
-//   xhr.responseType = 'json';
-//   // get a callback when the server responds
-//   xhr.open('POST', 'http://localhost:2081/hiddenRequest')
-//   xhr.onload  = function() {
-//     var testVal = xhr.response['gameState'];
-//   }
-//   xhr.send(JSON.stringify({ 'clickPosition': i }))
-// }
-
-handleGameKeySubmit(event) {
-  if (this.state.gameKeyTextBox.length != keyLength) {
-    alert("Game Key length is invalid. Please ensure it is of length: " + keyLength);
-    
-    this.setState({gameKeyTextBox: this.state.gameKey} )
-  } else {
-    this.setState({gameKeyTextBox: this.state.gameKeyTextBox.toUpperCase()} )
-    this.setState({gameKey: this.state.gameKeyTextBox} )
-    
+  handleClick(i) {
+    //const newState = this.state.currentDisplay.slice();
+    //newState[i] = this.state.xIsNext ? "X" : "O";
+    //this.state.xIsNext = !this.state.xIsNext;
+    //this.setState({
+    //  currentDisplay : newState
+    //});
+    // this.getData(i);
     var data = {
-      clickPosition: -1,
+      clickPosition: i,
       game_key: this.state.gameKey,
       cookie: this.state.cookie,
     };
 
     sendDataToServer(this, data);
   }
-  
-  event.preventDefault();
-}
 
-handleGameKeyChange(event) {
-  this.setState({gameKeyTextBox: event.target.value} ) 
-}
+  // getData(i) {
+  //   // create a new XMLHttpRequest
+  //   var xhr = new XMLHttpRequest()
+  //   xhr.responseType = 'json';
+  //   // get a callback when the server responds
+  //   xhr.open('POST', 'http://localhost:2081/hiddenRequest')
+  //   xhr.onload  = function() {
+  //     var testVal = xhr.response['gameState'];
+  //   }
+  //   xhr.send(JSON.stringify({ 'clickPosition': i }))
+  // }
 
-render() {
-  const current = this.state.currentDisplay;
-  return (
-    // TODO lock scaling of buttons when window width is shrunk
-    <div className="game">
-      <div className="game-title">
-        <h1>Royal Game of Ur</h1> 
+  handleGameKeySubmit(event) {
+    if (this.state.gameKeyTextBox.length != keyLength) {
+      alert("Game Key length is invalid. Please ensure it is of length: " + keyLength);
+
+      this.setState({ gameKeyTextBox: this.state.gameKey })
+    } else {
+      this.setState({ gameKeyTextBox: this.state.gameKeyTextBox.toUpperCase() })
+      this.setState({ gameKey: this.state.gameKeyTextBox })
+
+      var data = {
+        clickPosition: -1,
+        game_key: this.state.gameKey,
+        cookie: this.state.cookie,
+      };
+
+      sendDataToServer(this, data);
+    }
+
+    event.preventDefault();
+  }
+
+  handleGameKeyChange(event) {
+    this.setState({ gameKeyTextBox: event.target.value })
+  }
+
+  render() {
+    const current = this.state.currentDisplay;
+    return (
+      // TODO lock scaling of buttons when window width is shrunk
+      <div className="game">
+        <div className="game-title">
+          <h1>Royal Game of Ur</h1>
+        </div>
+        <div className="game-board">
+          <Board
+            squares={current}
+            onClick={i => this.handleClick(i)}
+          />
+        </div>
+
+        <br />
+        <br />
+
+        <form onSubmit={this.handleGameKeySubmit}>
+          <label>
+            Game Key:
+          <input type="text" value={this.state.gameKeyTextBox} onChange={this.handleGameKeyChange} autoCorrect="off" autoCapitalize="none" />
+          </label>
+          <input type="submit" value="Submit" />
+        </form>
+
+        <form>
+          <label>
+            Dice Roll:
+          <input type="text" value={this.state.diceRoll} readOnly={true} />
+          </label>
+        </form>
+        <form>
+          <label>
+            <input type="text" value={this.state.message} readOnly={true} />
+          </label>
+        </form>
       </div>
-      <div className="game-board">
-        <Board
-          squares={current}
-          onClick={i => this.handleClick(i)}
-        />
-      </div>
-
-      <br/>
-      <br/>
-
-      <form onSubmit={this.handleGameKeySubmit}>
-        <label>
-          Game Key: 
-          <input type="text" value={this.state.gameKeyTextBox} onChange={this.handleGameKeyChange } autoCorrect="off" autoCapitalize="none"/>
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
-
-      <form>
-        <label>
-          Dice Roll: 
-          <input type="text" value={this.state.diceRoll} readOnly={true}/>
-        </label>
-      </form>
-      <form>
-        <label>
-          <input type="text" value={this.state.message} readOnly={true}/>
-        </label>
-      </form>
-    </div>
-  );
-}
+    );
+  }
 }
 
 
@@ -259,9 +259,9 @@ function sendDataToServer(targetobject, data) {
   request.open('PUT', endpoint, true);
   request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
   request.onload = function () {
-    var gamestate  = JSON.parse(request.responseText);
+    var gamestate = JSON.parse(request.responseText);
     targetobject.setState({
-      currentDisplay : gamestate["gameState"],
+      currentDisplay: gamestate["gameState"],
       diceRoll: gamestate["rollValue"],
       message: gamestate["message"]
     })
@@ -270,34 +270,34 @@ function sendDataToServer(targetobject, data) {
 }
 
 // credit to https://www.quirksmode.org/js/cookies.html
-function createCookie(name,value,days) {
-	if (days) {
-		var date = new Date();
-		date.setTime(date.getTime()+(days*24*60*60*1000));
-		var expires = "; expires="+date.toGMTString();
-	}
-	else var expires = "";
-	document.cookie = name+"="+value+expires+"; path=/";
+function createCookie(name, value, days) {
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    var expires = "; expires=" + date.toGMTString();
+  }
+  else var expires = "";
+  document.cookie = name + "=" + value + expires + "; path=/";
 }
 
 function readCookie(name) {
-	var nameEQ = name + "=";
-	var ca = document.cookie.split(';');
-	for(var i=0;i < ca.length;i++) {
-		var c = ca[i];
-		while (c.charAt(0)==' ') c = c.substring(1,c.length);
-		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-	}
-	return null;
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
 }
 
 function eraseCookie(name) {
-	createCookie(name,"",-1);
+  createCookie(name, "", -1);
 }
 
 // Credit to https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
 function uuidv4() {
-  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
   );
 }
@@ -305,12 +305,12 @@ function uuidv4() {
 // Credit to https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript/8084248#8084248
 // dec2hex :: Integer -> String
 // i.e. 0-255 -> '00'-'ff'
-function dec2hex (dec) {
+function dec2hex(dec) {
   return ('0' + dec.toString(16)).substr(-2)
 }
 
 // generateId :: Integer -> String
-function generateId (len) {
+function generateId(len) {
   var arr = new Uint8Array((len || 40) / 2)
   // The crypto.getRandomValues() method lets you get cryptographically strong random values. 
   // The array given as the parameter is filled with random numbers (random in its cryptographic meaning).
