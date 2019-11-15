@@ -97,9 +97,6 @@ class Game():
         self.player0.updateRoll()
         self.player1.updateRoll()
 
-        print("Player0 roll: " + str(self.player0.roll))
-        print("Player1 roll: " + str(self.player1.roll))
-
         self.gameCompleted = False
         self.winningPlayer = -1
 
@@ -115,27 +112,35 @@ class Game():
             if pos + roll not in piecePos:
                 return True
         # check if you can move a piece off your bench
-        if benchSize > 0 and roll - 1 not in piecePos:
+        if benchSize > 0 and roll + Player.benchPosition not in piecePos:
             return True
+        return False
 
-    def handleClick(self, id, position):
-        print("Player 0: ")
+    def printPlayerStates(self, msg=''):
+        print(msg)
+        print("-----------------------\nPlayer 0: ")
         print("piecePositions: " + str(self.player0.piecePositions))
         print("benchSize: " + str(self.player0.benchSize))
         print("roll: " + str(self.player0.roll))
-        print("selectedPiece: " + str(self.player0.selectedPiece))
+        print("selectedPiece: " + str(self.player0.selectedPiece) + "\n\n")
         
         print("Player 1: ")
         print("piecePositions: " + str(self.player1.piecePositions))
         print("benchSize: " + str(self.player1.benchSize))
         print("roll: " + str(self.player1.roll))
-        print("selectedPiece: " + str(self.player1.selectedPiece))
+        print("selectedPiece: " + str(self.player1.selectedPiece) + "\n--------------------")
+    
+    def handleClick(self, id, position):
+        # self.printPlayerStates("HANDLE CLICK START")
 
         # Handle second player joining
-        if (self.player1.id == None and id != self.player0.id):
-            self.player1.id = id
-            print("player 1 id set")
-            return self.render(1)
+        if (self.player1.id == None):
+            if id != self.player0.id:
+                self.player1.id = id
+                print("player 1 id set")
+                return self.render(1)
+            else:
+                return self.render(0)
         # Handle wrong person attempting to join game
         elif (self.player1.id != id and self.player0.id != id):
             return self.render(0) # Just return a render of the game from player 0's perspective
@@ -149,18 +154,24 @@ class Game():
         elif (id == self.player1.id):
             player = self.player1
             opponent = self.player0
+        else:
+            # default to player 0 view if spectator
+            return self.render(0)
 
         # check if it is their turn and check if it's a valid move
-        if (self.nextPlayerToPlay == player.id and position in Player.validClickLocations):
+        if (self.nextPlayerToPlay == player.role and position in Player.validClickLocations):
             # Handle zero rolls
             if (player.roll != 0):
                 # Check if they already have something selected or if they are trying to select something
                 selectedLocationTranslated = Player.playerConversion.get(position)
+
+                # print("\n\nposition: " + str(position) + " selectedLocationTranslated: " + str(selectedLocationTranslated))
+
                 assert selectedLocationTranslated != None
 
                 if (player.selectedPiece == None):
                     # If they are trying to select something check if they have clicked on something valid
-                    if selectedLocationTranslated in player.piecePositions or selectedLocationTranslated == 15:
+                    if selectedLocationTranslated in player.piecePositions or selectedLocationTranslated == Player.benchPosition:
                         player.selectedPiece = selectedLocationTranslated
                 else:
                     # If they have already selected something. check if the move they are requesting is valid
@@ -209,6 +220,7 @@ class Game():
                 self.nextPlayerToPlay = opponent.role
                 opponent.updateRoll()
                 
+        # self.printPlayerStates("HANDLE CLICK END")
         return self.render(player.role)
     '''
         # Handle player making a click
@@ -332,7 +344,7 @@ class Game():
             'gameOver'   = bool if game over,   
         }
         '''
-        print("render: " + str(playerRole))
+        # print("render: " + str(playerRole))
         boardState = []
         for _ in range(24):
             boardState.append("")
@@ -356,7 +368,6 @@ class Game():
             opponent = self.player0
         
         rollValue = player.roll
-        print("role: " + str(playerRole) + " roll: " + str(rollValue))
 
         for value in player.piecePositions:
             boardState[Player.convertPlayer.get(value)] = "X"
