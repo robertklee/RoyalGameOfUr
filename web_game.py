@@ -28,10 +28,9 @@ def root():
 @app.put('/hiddenRequest')
 def test():
   data_bytes = request._get_body_string()
-  # print(request.environ.get('REMOTE_ADDR'))
+
   request_data = json.loads(data_bytes)
   cookie = request_data['cookie']
-  print('cookie value: ' + cookie)
   returnVal = None
   # Handle new clients 
   print(request_data)

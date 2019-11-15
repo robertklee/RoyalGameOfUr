@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import numpy as np
 import random
 from random import randint
@@ -123,6 +124,9 @@ class Player():
         return False
 
 class Game():
+    # Games without input for 600 seconds will be suspended
+    timeDeltaForSuspension = timedelta(0, 600, 0)
+    maxActiveGames = 20
     def __init__(self, player0Id):
         self.nextPlayerToPlay = intialPlayer
 
@@ -130,15 +134,17 @@ class Game():
 
         self.player0 = Player(player0Id, [], startingBenchSize, -1, 0, None)
         self.player1 = Player(None, [], startingBenchSize, -1, 1, None)
-        self.player0.updateRoll()
-        self.player1.updateRoll()
 
         self.gameCompleted = False
         self.winningPlayer = -1
 
+        self.mostRecentValidClick = datetime.today()
+        self.suspended = False
+
     def printPlayerStates(self, msg=''):
         print(msg)
-        print("-----------------------\nPlayer 0: ")
+        print("-----------------------")
+        print("Player 0: ")
         print("piecePositions: " + str(self.player0.piecePositions))
         print("benchSize: " + str(self.player0.benchSize))
         print("roll: " + str(self.player0.roll))
@@ -148,7 +154,8 @@ class Game():
         print("piecePositions: " + str(self.player1.piecePositions))
         print("benchSize: " + str(self.player1.benchSize))
         print("roll: " + str(self.player1.roll))
-        print("selectedPiece: " + str(self.player1.selectedPiece) + "\n--------------------")
+        print("selectedPiece: " + str(self.player1.selectedPiece))
+        print("-----------------------")
     
     def handleClick(self, id, position):
         # self.printPlayerStates("HANDLE CLICK START")
@@ -158,6 +165,10 @@ class Game():
             if id != self.player0.id:
                 self.player1.id = id
                 print("player 1 id set")
+
+                # initialize rolls
+                self.player0.updateRoll()
+                self.player1.updateRoll()
                 return self.render(1)
             else:
                 return self.render(0)
@@ -180,6 +191,7 @@ class Game():
 
         # check if it is their turn and check if it's a valid move
         if (self.nextPlayerToPlay == player.role and position in Player.validClickLocations):
+            self.mostRecentValidClick = datetime.today()
             # Handle zero rolls
             if (player.roll != 0 and player.moveExists()):
                 # Check if they already have something selected or if they are trying to select something
@@ -276,6 +288,8 @@ class Game():
             message = "Congrats! You won!" if youWon else "Game over!"
         elif gameConnected:
             message = "It's your turn!" if yourTurn else "Opponent's turn!"
+        elif self.suspended:
+            message = "Opponent has disconnected."
         else:
             message = "Waiting for opponent..."
         
@@ -305,7 +319,7 @@ class Game():
 
         returnValue = {
             'gameState' : boardState,
-            'message'  : message,
+            'message'   : message,
             'rollValue' : rollValue,
             'youWon'    : youWon,
             'gameOver'  : gameOver,
