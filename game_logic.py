@@ -84,7 +84,16 @@ class Player():
         self.selectedPiece = selectedPiece
 
     def updateRoll(self):
-        self.roll = randint(0, 1) + randint(0, 1) + randint(0, 1) + randint(0, 1)
+        # rolling 4 dice, each with either 0 or 1 value, results in
+        # mean of 4*0.5 and variance of 4*0.25
+        normal = np.round(np.random.normal(2,1,1))[0]
+        if normal < 0:
+            normal = 0
+        
+        if normal > 4:
+            normal = 4
+        
+        self.roll = normal
     
     def moveExists(self):
         '''
