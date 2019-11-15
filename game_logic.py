@@ -91,7 +91,7 @@ class Player():
         Returns true if move exists returns false if no move exists
         '''
         # Check if any piece can move off the board
-        if max(self.piecePositions) + self.roll >= 14:
+        if len(self.piecePositions) > 0 and max(self.piecePositions) + self.roll >= 14:
             return True 
         # Check if you can move a piece forward without hitting another piece 
         for pos in self.piecePositions:
