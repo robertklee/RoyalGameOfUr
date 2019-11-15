@@ -85,6 +85,22 @@ class Player():
 
     def updateRoll(self):
         self.roll = randint(0, 1) + randint(0, 1) + randint(0, 1) + randint(0, 1)
+    
+    def moveExists(self):
+        '''
+        Returns true if move exists returns false if no move exists
+        '''
+        # Check if any piece can move off the board
+        if max(self.piecePositions) + self.roll >= 14:
+            return True 
+        # Check if you can move a piece forward without hitting another piece 
+        for pos in self.piecePositions:
+            if pos + self.roll not in self.piecePositions:
+                return True
+        # check if you can move a piece off your bench
+        if self.benchSize > 0 and self.roll + Player.benchPosition not in self.piecePositions:
+            return True
+        return False
 
 class Game():
     def __init__(self, player0Id):
@@ -99,22 +115,6 @@ class Game():
 
         self.gameCompleted = False
         self.winningPlayer = -1
-
-    def checkMoveExists(self, piecePos, roll, benchSize):
-        '''
-        Returns true if move exists returns false if no move exists
-        '''
-        # Check if any piece can move off the board
-        if max(piecePos) + roll >= 14:
-            return True 
-        # Check if you can move a piece forward without hitting another piece 
-        for pos in piecePos:
-            if pos + roll not in piecePos:
-                return True
-        # check if you can move a piece off your bench
-        if benchSize > 0 and roll + Player.benchPosition not in piecePos:
-            return True
-        return False
 
     def printPlayerStates(self, msg=''):
         print(msg)
@@ -161,7 +161,7 @@ class Game():
         # check if it is their turn and check if it's a valid move
         if (self.nextPlayerToPlay == player.role and position in Player.validClickLocations):
             # Handle zero rolls
-            if (player.roll != 0):
+            if (player.roll != 0 and player.moveExists()):
                 # Check if they already have something selected or if they are trying to select something
                 selectedLocationTranslated = Player.playerConversion.get(position)
 
