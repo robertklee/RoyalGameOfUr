@@ -6,6 +6,7 @@ import json
 from bottle import HTTPResponse
 import threading
 import time
+import sqlite3
 
 from game_logic import Game
 
@@ -19,7 +20,13 @@ app = bottle.Bottle()
 #br = BottleReact(app, prod=PROD, render_server=False)
 br = BottleReact(app, prod=PROD, verbose=True)
 
+# Active Game Dict
 games = {} 
+# Database
+conn = sqlite3.connect("Logs") # TODO finish and figure out
+curs = conn.cursor()
+curs.execute("CREATE TABLE IF NOT EXISTS Game_Server_Connection_Logs (cookie STRING PRIMARY KEY, accesses INT);")
+
 
 @app.get('/Game')
 def root():
@@ -36,7 +43,14 @@ def test():
   returnVal = None
   # Handle new clients 
   print(request_data)
-  if request_data['game_key'] not in games.keys():
+  curs.execute("SELECT COUNT(*) FROM Game_Server_Connection_Logs WHERE cookie=\"" + str(cookie).replace("-","") + "\";")
+  if curs.fetchone()[0] > 0:
+    curs.execute("INSERT INTO Game_Server_Connection_Logs (cookie, accesses) VALUES (\"" + str(cookie).replace("-","") + "\", 1);")
+  else:
+    curs.execute("UPDATE Game_Server_Connection_Logs SET accesses = accesses + 1 WHERE cookie = \"" + str(cookie).replace("-","") + "\";")
+    
+
+  if request_data['game_key'] not in games.keys():  
     games[request_data['game_key']] = [Game(cookie), 100]
     returnVal = games[request_data['game_key']][0].handleClick(cookie, request_data['clickPosition'])
   else:
