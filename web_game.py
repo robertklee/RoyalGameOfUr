@@ -4,6 +4,8 @@ import string
 from bottle import request
 import json
 from bottle import HTTPResponse
+import threading
+import time
 
 from game_logic import Game
 
@@ -35,10 +37,11 @@ def test():
   # Handle new clients 
   print(request_data)
   if request_data['game_key'] not in games.keys():
-    games[request_data['game_key']] = Game(cookie)
-    returnVal = games[request_data['game_key']].handleClick(cookie, request_data['clickPosition'])
+    games[request_data['game_key']] = [Game(cookie), 100]
+    returnVal = games[request_data['game_key']][0].handleClick(cookie, request_data['clickPosition'])
   else:
-    returnVal = games[request_data['game_key']].handleClick(cookie, request_data['clickPosition'])
+    returnVal = games[request_data['game_key']][0].handleClick(cookie, request_data['clickPosition'])
+    games[request_data['game_key']][1] = 100
   return HTTPResponse(
           status=200,
           headers={
@@ -76,7 +79,19 @@ def test():
 #         bottle.response.headers['Access-Control-Allow-Headers'] = \
 #             'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
 
+
+def TTL():
+  while (True):
+    for game_key in games.keys():
+      games[game_key][1] -= 1
+      if games[game_key][1] <= 0:
+        games.popitem(game_key)
+    time.sleep(6)
+    
+
 def run():
+  x = threading.Thread(target=TTL, args=())
+  x.start()
   bottle.debug(not PROD)
   bottle.run(
     app=app, 
