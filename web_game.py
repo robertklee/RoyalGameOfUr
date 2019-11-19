@@ -62,7 +62,9 @@ def test():
     else:
         returnVal = games[request_data['game_key']][0].handleClick(
             cookie, request_data['clickPosition'])
-        games[request_data['game_key']][1] = 100
+        # Reset time to live of games with valid user clicks not just render refreshes
+        if request_data['clickPosition'] != -1:
+          games[request_data['game_key']][1] = 100
     return HTTPResponse(
         status=200,
         headers={
