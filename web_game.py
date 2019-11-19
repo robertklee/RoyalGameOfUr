@@ -106,6 +106,7 @@ def TTL():
         for game_key in games.keys():
             games[game_key][1] -= 1
             if games[game_key][1] <= 0:
+              if len(games.keys() > 25):
                 games.popitem(game_key)
         time.sleep(6)
 
