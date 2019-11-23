@@ -27,6 +27,8 @@ connectionTableName = "ConnectionLogs"
 
 # Active Game Dict
 games = {}
+# Max number concurrent games
+maxNumGames = 25
 # Initialize Database
 conn = sqlite3.connect(dbFileName)
 curs = conn.cursor()
@@ -55,13 +57,15 @@ def test():
     # Retrieve all rows with the cookie as ID
     curs.execute("SELECT COUNT(*) FROM " + connectionTableName + " WHERE cookie=?;", (cookie,))
 
-    if curs.fetchone()[0] > 0:
+    if curs.fetchone()[0] == 0:
         # Add new cookie ID into database
-        curs.execute("INSERT INTO " + connectionTableName + " (cookie, firstAccessDate, numValidMoves) VALUES (?,?,?)", (cookie, datetime.today().timestamp(), 1))
+        curs.execute("INSERT INTO " + connectionTableName + " (cookie, firstAccessDate, numValidMoves) VALUES (?,?,?)", (cookie, datetime.today().timestamp(), 0))
     elif request_data['clickPosition'] != -1:
         # if it's a valid move, update number of valid moves registered
         curs.execute("UPDATE " + connectionTableName + " SET numValidMoves=numValidMoves+1 WHERE cookie=?", (cookie,))
     
+    # for row in curs.execute("SELECT * FROM " + connectionTableName):
+    #     print(row) 
     # commit changes to database
     conn.commit()
 
@@ -117,8 +121,7 @@ def TTL():
     while (True):
         for game_key in games.keys():
             games[game_key][1] -= 1
-            if games[game_key][1] <= 0:
-              if len(games.keys() > 25):
+            if games[game_key][1] <= 0 and len(games.keys()) > maxNumGames:
                 games.popitem(game_key)
         time.sleep(6)
 
