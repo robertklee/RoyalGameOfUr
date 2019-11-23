@@ -34,6 +34,7 @@ print("Stats for Table \"%s\"\n\n" % connectionTableName)
 print("Executing SQL Query \" %s \"..." % ("SELECT * FROM " + connectionTableName))
 print("Number of rows is: " + str(count[0]))
 for row in curs.execute("SELECT * FROM " + connectionTableName):
-    print(row)
+    print("Cookie: %s;\t Date First Accessed: %s \t Number Valid Clicks: %s" % \
+        (row[0], datetime.fromtimestamp(row[1]).strftime("%Y-%m-%d %H:%M:%S"), row[2]))
 
 conn.commit()
