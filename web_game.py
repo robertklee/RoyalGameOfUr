@@ -8,6 +8,7 @@ from bottle import HTTPResponse
 import threading
 import time
 import sqlite3
+from datetime import datetime
 
 from game_logic import Game
 
@@ -21,14 +22,17 @@ app = bottle.Bottle()
 #br = BottleReact(app, prod=PROD, render_server=False)
 br = BottleReact(app, prod=PROD, verbose=True)
 
+dbFileName = "Logs.db"
+connectionTableName = "ConnectionLogs"
+
 # Active Game Dict
 games = {}
-# Database
-conn = sqlite3.connect("Logs")  # TODO finish and figure out
+# Initialize Database
+conn = sqlite3.connect(dbFileName)
 curs = conn.cursor()
-curs.execute(
-    "CREATE TABLE IF NOT EXISTS Game_Server_Connection_Logs (cookie STRING PRIMARY KEY, accesses INT);")
-
+# curs.execute("DROP TABLE " + connectionTableName) # debug only
+curs.execute("CREATE TABLE IF NOT EXISTS " + connectionTableName + " (cookie STRING PRIMARY KEY, firstAccessDate BIGINT, numValidMoves INT);")
+conn.commit()
 
 @app.get('/Game')
 def root():
@@ -43,17 +47,23 @@ def test():
 
     request_data = json.loads(data_bytes)
     cookie = request_data['cookie']
+
     returnVal = None
     # Handle new clients
     print(request_data)
-    curs.execute("SELECT COUNT(*) FROM Game_Server_Connection_Logs WHERE cookie=\"" +
-                 str(cookie).replace("-", "") + "\";")
+
+    # Retrieve all rows with the cookie as ID
+    curs.execute("SELECT COUNT(*) FROM " + connectionTableName + " WHERE cookie=?;", (cookie,))
+
     if curs.fetchone()[0] > 0:
-        curs.execute("INSERT INTO Game_Server_Connection_Logs (cookie, accesses) VALUES (\"" +
-                     str(cookie).replace("-", "") + "\", 1);")
-    else:
-        curs.execute("UPDATE Game_Server_Connection_Logs SET accesses = accesses + 1 WHERE cookie = \"" +
-                     str(cookie).replace("-", "") + "\";")
+        # Add new cookie ID into database
+        curs.execute("INSERT INTO " + connectionTableName + " (cookie, firstAccessDate, numValidMoves) VALUES (?,?,?)", (cookie, datetime.today().timestamp(), 1))
+    elif request_data['clickPosition'] != -1:
+        # if it's a valid move, update number of valid moves registered
+        curs.execute("UPDATE " + connectionTableName + " SET numValidMoves=numValidMoves+1 WHERE cookie=?", (cookie,))
+    
+    # commit changes to database
+    conn.commit()
 
     if request_data['game_key'] not in games.keys():
         games[request_data['game_key']] = [Game(cookie), 100]
