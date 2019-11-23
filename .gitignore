@@ -3,6 +3,9 @@
 # python
 *.pyc
 
+# database
+*.db
+
 # compiled output
 /dist
 /tmp
