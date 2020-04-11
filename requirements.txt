@@ -1,0 +1,4 @@
+bottle-react==0.6.4
+bottle
+sqlite3
+numpy
