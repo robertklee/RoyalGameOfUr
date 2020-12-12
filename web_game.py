@@ -1,14 +1,14 @@
-import bottle
-import sys
-from bottlereact import BottleReact
-import string
-from bottle import request
 import json
-from bottle import HTTPResponse
+import sqlite3
+import string
+import sys
 import threading
 import time
-import sqlite3
 from datetime import datetime
+
+import bottle
+from bottle import HTTPResponse, request
+from bottlereact import BottleReact
 
 from game_logic import Game
 

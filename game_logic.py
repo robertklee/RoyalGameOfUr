@@ -1,7 +1,8 @@
-from datetime import datetime, timedelta
-import numpy as np
 import random
+from datetime import datetime, timedelta
 from random import randint
+
+import numpy as np
 
 startingBenchSize = 5
 intialPlayer = 0
